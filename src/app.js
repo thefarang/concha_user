@@ -4,7 +4,6 @@
 // Does not yet support HATEOS
 
 const express = require('express');
-const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const app = express();
@@ -23,7 +22,7 @@ app.use((req, res, next) => {
 
 // Database connection
 // @todo replace this with config
-mongoose.connect('mongodb://localhost:27017/local', {
+mongoose.connect('mongodb://mongo:27017/local', {
   useMongoClient: true
 });
 
@@ -35,7 +34,6 @@ process.on('SIGINT', () => {
   }); 
 });
 
-app.use(logger('dev')); // @todo replace with Bunyan
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const role = require('./routes/roles');

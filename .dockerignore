@@ -1,4 +1,6 @@
-node_modules/
+# @todo
+# Check for anything else we don't want 
+node_modules
 .vscode/
 .git/
 Dockerfile

@@ -24,9 +24,15 @@ router.get('/:id', (req, res, next) => {
       next(err);
       return;
     }
+
     res.set('Cache-Control', 'private, max-age=0, no-cache');
-    res.status(200);
-    res.json(role);
+    if (role == null) {
+      res.status(404);
+      res.json();
+    } else {
+      res.status(200);
+      res.json(role);
+    }
   });
 });
 
