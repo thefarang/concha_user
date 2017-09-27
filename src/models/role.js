@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 var RoleSchema = new Schema({
   // _id will be created by default
@@ -12,21 +12,21 @@ var RoleSchema = new Schema({
   name: {
     type: String,
     trim: true,
-    required: true,
+    required: true
   },
   created_at: {
     type: Date,
-    required: true,
+    required: true
   },
   updated_at: {
     type: Date,
     required: true
   }
-}, { 
-  collection: 'role' 
-});
+}, {
+  collection: 'role'
+})
 
 // Generate a Model from the Schema.
-var Role = mongoose.model('Role', RoleSchema);
+var Role = mongoose.model('Role', RoleSchema)
 
-module.exports = Role;
+module.exports = Role
