@@ -8,7 +8,7 @@ mongoose.connect('mongodb://mongo:27017/local')  // @todo
 
 let Role = require('../models/role')
 
-const chain = new Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
   Role.find().remove((err) => {
     if (err) {
       return reject(err)
@@ -111,6 +111,8 @@ const chain = new Promise((resolve, reject) => {
 })
 .catch((err) => {
   console.log('An error occurred')
+  console.log(err)
+  process.exit(0)
 })
 
 module.exports = router
