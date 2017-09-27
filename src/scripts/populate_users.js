@@ -1,14 +1,11 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
-
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://mongo:27017/local')  // @todo
-
 let User = require('../models/user')
 
-const chain = new Promise((resolve, reject) => {
+mongoose.connect('mongodb://mongo:27017/local')  // @todo
+
+new Promise((resolve, reject) => {
   User.find().remove((err) => {
     if (err) {
       return reject(err)
@@ -40,4 +37,6 @@ const chain = new Promise((resolve, reject) => {
 })
 .catch((err) => {
   console.log('An error occurred populating the users table.')
+  console.log(err)
+  process.exit(0)
 })
