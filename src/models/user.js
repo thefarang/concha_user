@@ -43,6 +43,9 @@ let UserSchema = new Schema({
   collection: 'user' 
 });
 
+// @todo
+// The following article uses the function arrow syntax without problems:
+// https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
 UserSchema.pre('save', function(next) {
   let user = this;
 
