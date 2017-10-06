@@ -33,25 +33,6 @@ new Promise((resolve, reject) => {
   })
 })
 .then(() => {
-  return new Promise((resolve, reject) => {
-    const user = new User()
-    user.email = 'test@test.com'
-    user.password = '12345'
-    user.role = 2
-    user.created_at = (new Date()).toISOString()
-    user.updated_at = (new Date()).toISOString()
-    user.save((err) => {
-      if (err) {
-        return reject(err)
-      }
-
-      console.log('Populated User')
-      console.log(user._id)
-      resolve()
-    })
-  })
-})
-.then(() => {
   process.exit(0)
 })
 .catch((err) => {
