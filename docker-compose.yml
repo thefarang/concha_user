@@ -21,7 +21,6 @@ services:
       # Make the following directories available to docker so that changes made on the host
       # are immediately available inside the docker container.
       - ./src:/app/src
-      - ./test:/app/test
       - ./package.json:/app/package.json
       - ./npm-shrinkwrap.json:/app/npm-shrinkwrap.json
     command: npm run debug
