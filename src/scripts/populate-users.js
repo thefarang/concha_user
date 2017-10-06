@@ -16,9 +16,9 @@ new Promise((resolve, reject) => {
 .then(() => {
   return new Promise((resolve, reject) => {
     const user = new User()
-    user.email = 'test@test.com'
-    user.password = '12345'
-    user.role = 2
+    user.email = 'no-reply@concha'
+    user.password = 'password_not_used'
+    user.role = 1
     user.created_at = (new Date()).toISOString()
     user.updated_at = (new Date()).toISOString()
     user.save((err) => {
@@ -26,7 +26,7 @@ new Promise((resolve, reject) => {
         return reject(err)
       }
 
-      console.log('Populated User')
+      console.log('Populated Guest User')
       console.log(user._id)
       resolve()
     })
