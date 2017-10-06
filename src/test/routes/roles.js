@@ -4,7 +4,7 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 const testRolesDb = require('../support/db-roles')
-const app = require('../../src/app')
+const app = require('../../app')
 
 chai.use(chaiHttp)
 

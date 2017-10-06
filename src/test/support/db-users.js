@@ -1,7 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const User = require('../../src/models/user')
+const User = require('../../models/user')
 
 const ObjectId = mongoose.Types.ObjectId
 

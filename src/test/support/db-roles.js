@@ -1,7 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const Role = require('../../src/models/role')
+const Role = require('../../models/role')
 
 // @todo
 // Use the test database and set in config
@@ -28,7 +28,6 @@ const clean = () => {
 }
 
 const populate = () => {
-
   return new Promise((resolve, reject) => {
     const userRole = new Role()
     userRole.id = 1
@@ -102,7 +101,6 @@ const populate = () => {
       })
     })
   })
-
 }
 
 const close = () => {

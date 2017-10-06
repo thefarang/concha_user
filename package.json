@@ -5,8 +5,8 @@
   "scripts": {
     "lint": "./node_modules/.bin/standard \"src/**/*.js\"",
     "fix-style": "./node_modules/.bin/standard --fix \"src/**/*.js\"",
-    "debug": "./node_modules/.bin/nodemon ./bin/www",
-    "test": "./node_modules/.bin/mocha --timeout 10000 \"test/routes/*.js\""
+    "debug": "./node_modules/.bin/nodemon ./src/bin/startup.js",
+    "test": "./node_modules/.bin/mocha --timeout 10000 \"src/test/routes/*.js\""
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
@@ -21,5 +21,15 @@
     "chai-http": "3.0.0",
     "mocha": "3.5.3",
     "nodemon": "1.12.1"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach",
+      "it"
+    ]
   }
 }
