@@ -1,10 +1,11 @@
 'use strict'
 
+const config = require('config')
 const express = require('express')
 const router = express.Router()
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://mongo:27017/local')  // @todo
+mongoose.connect(config.get('mongoConn'))
 
 let Role = require('../models/role')
 

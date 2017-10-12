@@ -7,7 +7,7 @@ services:
 
   mongo:
     container_name: mongo
-    image: mongo:3.0.15-wheezy
+    image: mvertes/alpine-mongo:3.4.9-0
     ports:
       # Expose port to host machine for debugging
       - 27017
@@ -17,6 +17,8 @@ services:
   concha_user:
     container_name: concha_user
     build: .
+    environment:
+      - NODE_CONFIG_DIR=/app/src/config
     volumes:
       # Make the following directories available to docker so that changes made on the host
       # are immediately available inside the docker container.

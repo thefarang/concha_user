@@ -3,6 +3,7 @@
 // @todo
 // Does not yet support HATEOS
 
+const config = require('config')
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
@@ -20,9 +21,9 @@ app.use((req, res, next) => {
   next()
 })
 
-// Database connection
-// @todo replace this with config
-mongoose.connect('mongodb://mongo:27017/local', {
+// @todo
+// Should this be abstracted into a module?
+mongoose.connect(config.get('mongoConn'), {
   useMongoClient: true
 })
 
