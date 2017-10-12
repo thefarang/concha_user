@@ -1,9 +1,10 @@
 'use strict'
 
+const config = require('config')
 const mongoose = require('mongoose')
 let User = require('../models/user')
 
-mongoose.connect('mongodb://mongo:27017/local')  // @todo
+mongoose.connect(config.get('mongoConn'))
 
 new Promise((resolve, reject) => {
   User.find().remove((err) => {
