@@ -2,6 +2,7 @@
 
 // @todo
 // Does not yet support HATEOS
+
 const log = require('./lib/log')
 const config = require('config')
 const express = require('express')
