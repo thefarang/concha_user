@@ -6,7 +6,7 @@ volumes:
 services:
 
   mongo:
-    container_name: mongo
+    #container_name: mongo
     image: mvertes/alpine-mongo:3.4.9-0
     ports:
       # Expose port to host machine for debugging
@@ -15,7 +15,7 @@ services:
       - database:/data/db
 
   concha_user:
-    container_name: concha_user
+    #container_name: concha_user
     build: .
     environment:
       - NODE_CONFIG_DIR=/app/src/config

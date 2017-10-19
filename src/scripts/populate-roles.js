@@ -1,5 +1,6 @@
 'use strict'
 
+const log = require('../lib/log')
 const config = require('config')
 const express = require('express')
 const router = express.Router()
@@ -12,6 +13,7 @@ let Role = require('../models/role')
 new Promise((resolve, reject) => {
   Role.find().remove((err) => {
     if (err) {
+      log.info({ err: err }, 'Unable to find and remove all roles')
       return reject(err)
     }
     resolve()
@@ -26,11 +28,11 @@ new Promise((resolve, reject) => {
     userRole.updated_at = (new Date()).toISOString()
     userRole.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Guest role')
         return reject(err)
       }
 
-      console.log('Populated Guest Role')
-      console.log(userRole._id)
+      log.info({ userRoleId: userRole._id }, 'Populated Guest role')
       resolve()
     })
   })
@@ -44,11 +46,11 @@ new Promise((resolve, reject) => {
     userRole.updated_at = (new Date()).toISOString()
     userRole.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Blogger role')
         return reject(err)
       }
 
-      console.log('Populated Blogger Role')
-      console.log(userRole._id)
+      log.info({ userRoleId: userRole._id }, 'Populated Blogger role')
       resolve()
     })
   })
@@ -62,11 +64,11 @@ new Promise((resolve, reject) => {
     userRole.updated_at = (new Date()).toISOString()
     userRole.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Enhanced Blogger role')
         return reject(err)
       }
 
-      console.log('Populated Enhanced Blogger Role')
-      console.log(userRole._id)
+      log.info({ userRoleId: userRole._id }, 'Populated Enhanced Blogger role')
       resolve()
     })
   })
@@ -80,11 +82,11 @@ new Promise((resolve, reject) => {
     userRole.updated_at = (new Date()).toISOString()
     userRole.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Service Provider role')
         return reject(err)
       }
 
-      console.log('Populated Service Provider Role')
-      console.log(userRole._id)
+      log.info({ userRoleId: userRole._id }, 'Populated Service Provider role')
       resolve()
     })
   })
@@ -98,11 +100,11 @@ new Promise((resolve, reject) => {
     userRole.updated_at = (new Date()).toISOString()
     userRole.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Enhanced Service Provider role')
         return reject(err)
       }
 
-      console.log('Populated Enhanced Service Provider Role')
-      console.log(userRole._id)
+      log.info({ userRoleId: userRole._id }, 'Populated Enhanced Service Provider role')
       resolve()
     })
   })
@@ -111,8 +113,7 @@ new Promise((resolve, reject) => {
   process.exit(0)
 })
 .catch((err) => {
-  console.log('An error occurred')
-  console.log(err)
+  log.info({ err: err }, 'An error occurred populating the roles collection')
   process.exit(0)
 })
 
