@@ -1,5 +1,6 @@
 'use strict'
 
+const log = require('../lib/log')
 const config = require('config')
 const mongoose = require('mongoose')
 let User = require('../models/user')
@@ -9,6 +10,7 @@ mongoose.connect(config.get('mongoConn'))
 new Promise((resolve, reject) => {
   User.find().remove((err) => {
     if (err) {
+      log.info({ err: err }, 'Unable to find and remove all users')
       return reject(err)
     }
     resolve()
@@ -24,11 +26,11 @@ new Promise((resolve, reject) => {
     user.updated_at = (new Date()).toISOString()
     user.save((err) => {
       if (err) {
+        log.info({ err: err }, 'Unable to create Guest user')
         return reject(err)
       }
 
-      console.log('Populated Guest User')
-      console.log(user._id)
+      log.info({ userId: user._id }, 'Populated Guest user')
       resolve()
     })
   })
@@ -37,7 +39,6 @@ new Promise((resolve, reject) => {
   process.exit(0)
 })
 .catch((err) => {
-  console.log('An error occurred populating the users table.')
-  console.log(err)
+  log.info({ err: err }, 'An error occurred populating the users collection')
   process.exit(0)
 })
