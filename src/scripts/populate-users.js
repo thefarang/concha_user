@@ -1,11 +1,11 @@
 'use strict'
 
-const log = require('../lib/log')
+const log = require('../services/log')
 const config = require('config')
 const mongoose = require('mongoose')
 let User = require('../models/user')
 
-mongoose.connect(config.get('mongoConn'))
+mongoose.connect(config.get('dbConn'))
 
 new Promise((resolve, reject) => {
   User.find().remove((err) => {

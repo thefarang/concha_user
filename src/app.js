@@ -3,7 +3,7 @@
 // @todo
 // Does not yet support HATEOS
 
-const log = require('./lib/log')
+const log = require('./services/log')
 const config = require('config')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -12,7 +12,7 @@ const app = express()
 
 // @todo
 // Should this be abstracted into a module?
-mongoose.connect(config.get('mongoConn'), {
+mongoose.connect(config.get('dbConn'), {
   useMongoClient: true
 })
 

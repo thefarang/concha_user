@@ -11,7 +11,7 @@ const ObjectId = mongoose.Types.ObjectId
 const connect = () => {
   return new Promise((resolve, reject) => {
     mongoose.Promise = global.Promise
-    mongoose.connect(config.get('mongoConn'), { useMongoClient: true }, (err) => {
+    mongoose.connect(config.get('dbConn'), { useMongoClient: true }, (err) => {
       if (err) {
         return reject(err)
       }

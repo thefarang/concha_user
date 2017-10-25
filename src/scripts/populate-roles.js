@@ -1,12 +1,12 @@
 'use strict'
 
-const log = require('../lib/log')
+const log = require('../services/log')
 const config = require('config')
 const express = require('express')
 const router = express.Router()
 
 const mongoose = require('mongoose')
-mongoose.connect(config.get('mongoConn'))
+mongoose.connect(config.get('dbConn'))
 
 let Role = require('../models/role')
 
