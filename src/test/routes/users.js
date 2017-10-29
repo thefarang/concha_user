@@ -4,7 +4,10 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 const testUsersDb = require('../support/db-users')
-const app = require('../../app')
+const dbService = require('../../services/database/service')
+
+// Inject app dependencies
+const app = require('../../app')(dbService)
 
 chai.use(chaiHttp)
 

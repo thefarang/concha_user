@@ -3,7 +3,7 @@
 const log = require('../services/log')
 const config = require('config')
 const mongoose = require('mongoose')
-let User = require('../models/user')
+let User = require('../services/database/schema/user')
 
 mongoose.connect(config.get('dbConn'))
 

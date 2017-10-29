@@ -2,7 +2,7 @@
 
 const config = require('config')
 const mongoose = require('mongoose')
-const User = require('../../models/user')
+const User = require('../../services/database/schema/user')
 
 const ObjectId = mongoose.Types.ObjectId
 

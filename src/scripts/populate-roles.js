@@ -8,7 +8,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 mongoose.connect(config.get('dbConn'))
 
-let Role = require('../models/role')
+let Role = require('../services/database/schema/role')
 
 new Promise((resolve, reject) => {
   Role.find().remove((err) => {
