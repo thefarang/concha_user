@@ -3,58 +3,32 @@
 const log = require('../services/log')
 const dbService = require('../services/database/service')
 
-const init = () => {
-  return new Promise((resolve, reject) => {
-    try {
-      log.info({}, 'Connecting to the dbase...')
-      dbService.connect()
-      return resolve()
-    } catch (err) {
-      log.info({ err: err }, 'Unable to connect to the dbase')
-      return reject(err)
-    }
-  })
-  .then(() => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        log.info({}, 'Cleansing the users collection...')
-        await dbService.removeAllUsers()
-        return resolve()
-      } catch (err) {
-        log.info({ err: err }, 'Unable to cleanse the collection')
-        return reject(err)
-      }
+const init = async () => {
+  try {
+    log.info({}, 'Connecting to the dbase...')
+    dbService.connect()
+
+    log.info({}, 'Cleansing the Users collection...')
+    await dbService.removeAllUsers()
+
+    const roleDefinitions = dbService.getRoleDefinitions()
+    const guestRole = roleDefinitions.find(currentRole => currentRole.id === 1)
+    log.info({}, `Populating the ${guestRole.name} User...`)
+    await dbService.saveUser({
+      email: 'no-reply@concha',
+      password: 'password_not_used',
+      role: guestRole.id,
+      created_at: (new Date()).toISOString(),
+      updated_at: (new Date()).toISOString()
     })
-  })
-  .then(() => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        log.info({}, 'Populating the Guest user...')
-        await dbService.saveUser({
-          email: 'no-reply@concha',
-          password: 'password_not_used',
-          role: 1,
-          created_at: (new Date()).toISOString(),
-          updated_at: (new Date()).toISOString()
-        })
-        return resolve()
-      } catch (err) {
-        log.info({ err: err }, 'An error occurred populating the Guest user')
-        return reject(err)
-      }
-    })
-  })
-  .then(() => {
-    return new Promise((resolve, reject) => {
-      log.info({}, 'Disconnecting from the dbase...')
-      dbService.disconnect()
-      return resolve()
-    })
-  })
-  .catch((err) => {
-    log.info({ err: err }, 'An error occurred during the initial Users loading process')
-    process.exit(0)
-  })
+
+    log.info({}, 'Disconnecting from the dbase...')
+    dbService.disconnect()
+
+  } catch (err) {
+    log.info({ err: err }, 'An error occurred during the Users loading process')
+    return reject(err)
+  }
 }
 
 init()

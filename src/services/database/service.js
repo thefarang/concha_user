@@ -1,5 +1,8 @@
 'use strict'
 
+// @todo
+// Rationalise this and the mocks.database to ensure consistency
+
 const config = require('config')
 const log = require('../log')
 const mongoose = require('mongoose')
@@ -26,6 +29,8 @@ const disconnect = () => {
   })
 }
 
+// @todo
+// Extract all this to a library?
 const getRoleDefinitions = () => {
   return [
     {
@@ -122,7 +127,7 @@ const saveRole = (roleIn) => {
         return reject(err)
       }
 
-      log.info({ role: userRole }, 'Populated role successfully')
+      log.info({ role: roleIn }, 'Populated role successfully')
       resolve()
     })
   })
@@ -166,7 +171,8 @@ const saveUser = (document) => {
     user.role = document.role
     user.created_at = document.created_at
     user.updated_at = document.updated_at
-    user.save(document, (err) => {
+    // user.save(document, (err) => {
+    user.save((err) => {
       if (err) {
         log.info({
           err: err,

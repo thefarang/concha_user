@@ -1,5 +1,8 @@
 'use strict'
 
+// @todo
+// Rationalise this and the database.service to ensure consistency
+
 const dbService = require('../../services/database/service')
 
 let roles = []
