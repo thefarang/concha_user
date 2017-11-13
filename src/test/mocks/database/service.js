@@ -3,7 +3,7 @@
 // @todo
 // Rationalise this and the database.service to ensure consistency
 
-const dbService = require('../../services/database/service')
+const dbService = require('../../../services/database/service')
 
 let roles = []
 let users = []
@@ -18,8 +18,16 @@ const connect = () => {
 const disconnect = () => {
 }
 
+const removeAllRoles = () => {
+  roles = []
+}
+
 const getRoleDefinitions = () => {
   return dbService.getRoleDefinitions()
+}
+
+const saveRole = (role) => {
+  roles.push(role)
 }
 
 const findRole = (query) => {
@@ -31,12 +39,12 @@ const findRoles = () => {
   return roles
 }
 
-const saveRole = (role) => {
-  roles.push(role)
+const removeAllUsers = () => {
+  users = []
 }
 
-const removeAllRoles = () => {
-  roles = []
+const saveUser = (user) => {
+  users.push(user)
 }
 
 const findUser = (query) => {
@@ -48,24 +56,16 @@ const findUsers = () => {
   return users
 }
 
-const saveUser = (user) => {
-  users.push(user)
-}
-
-const removeAllUsers = () => {
-  users = []
-}
-
 module.exports = {
   connect,
   disconnect,
-  findRole,
-  findRoles,
+  removeAllRoles,
   getRoleDefinitions,
   saveRole,
-  removeAllRoles,
-  findUser,
-  findUsers,
+  findRole,
+  findRoles,
   removeAllUsers,
-  saveUser
+  saveUser,
+  findUser,
+  findUsers
 }

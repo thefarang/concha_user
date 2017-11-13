@@ -29,6 +29,20 @@ const disconnect = () => {
   })
 }
 
+const removeAllRoles = () => {
+  return new Promise((resolve, reject) => {
+    Role.remove({}, (err) => {
+      if (err) {
+        log.info({
+          err: err
+        }, 'An error occurred whilst deleting all roles')
+        return reject(err)
+      }
+      return resolve()
+    })
+  })
+}
+
 // @todo
 // Extract all this to a library?
 const getRoleDefinitions = () => {
@@ -64,6 +78,25 @@ const getRoleDefinitions = () => {
       updatedAt: (new Date()).toISOString()
     },
   ]
+}
+
+const saveRole = (roleIn) => {
+  return new Promise((resolve, reject) => {
+    const role = new Role()
+    role.id = roleIn.id
+    role.name = roleIn.name
+    role.created_at = roleIn.createdAt
+    role.updated_at = roleIn.updatedAt
+    role.save((err) => {
+      if (err) {
+        log.info({ err: err, role: roleIn }, 'Unable to create role')
+        return reject(err)
+      }
+
+      log.info({ role: roleIn }, 'Populated role successfully')
+      resolve()
+    })
+  })
 }
 
 const findRole = (query) => {
@@ -114,39 +147,6 @@ const findRoles = () => {
   })
 }
 
-const saveRole = (roleIn) => {
-  return new Promise((resolve, reject) => {
-    const role = new Role()
-    role.id = roleIn.id
-    role.name = roleIn.name
-    role.created_at = roleIn.createdAt
-    role.updated_at = roleIn.updatedAt
-    role.save((err) => {
-      if (err) {
-        log.info({ err: err, role: roleIn }, 'Unable to create role')
-        return reject(err)
-      }
-
-      log.info({ role: roleIn }, 'Populated role successfully')
-      resolve()
-    })
-  })
-}
-
-const removeAllRoles = () => {
-  return new Promise((resolve, reject) => {
-    Role.remove({}, (err) => {
-      if (err) {
-        log.info({
-          err: err
-        }, 'An error occurred whilst deleting all roles')
-        return reject(err)
-      }
-      return resolve()
-    })
-  })
-}
-
 // @todo
 // Should this really be exposed?
 const removeAllUsers = () => {
@@ -188,11 +188,11 @@ const saveUser = (document) => {
 module.exports = {
   connect,
   disconnect,
-  findRole,
-  findRoles,
+  removeAllRoles,
   getRoleDefinitions,
   saveRole,
-  removeAllRoles,
+  findRole,
+  findRoles,
   removeAllUsers,
   saveUser
 }

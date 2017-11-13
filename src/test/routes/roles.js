@@ -4,12 +4,14 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 
-const dbService = require('../mocks/database')
+const dbService = require('../mocks/database/service')
 const bootApp = require('../../app')
 
 let app = null
 chai.use(chaiHttp)
 
+// @todo
+// Extract this to a library, with dbService.getRoleDefinitions() ??
 const isValidRole = (role) => {
   if ((role.id === 1) && (role.name === 'Guest')) {
     return true
