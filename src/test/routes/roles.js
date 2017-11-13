@@ -82,7 +82,6 @@ describe('User Role API Endpoint', () => {
       })
   })
 
-  /*
   it('Should return 200 and the full set of user roles when all roles are requested', (done) => {
     chai
       .request(app)
@@ -100,7 +99,6 @@ describe('User Role API Endpoint', () => {
         done()
       })
   })
-  */
 })
 /* eslint-enable handle-callback-err */
 /* eslint-enable no-unused-expressions */

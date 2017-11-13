@@ -3,25 +3,40 @@
 const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
-const testUsersDb = require('../support/db-users')
-const dbService = require('../../services/database/service')
 
-// Inject app dependencies
-const app = require('../../app')(dbService)
+const tools = require('../support/tools')
+const dbService = require('../mocks/database')
+const bootApp = require('../../app')
 
+let app = null
 chai.use(chaiHttp)
 
 /* eslint-disable no-unused-expressions */
 /* eslint-disable handle-callback-err */
 describe('Users API Endpoint', () => {
-  before(async () => {
-    await testUsersDb.connect()
-    await testUsersDb.clean()
-    await testUsersDb.populate()
+  before(() => {
+    // Connect to the database
+    dbService.connect()
+
+    // Insert app dependencies
+    app = bootApp(dbService)
+
+    // Cleanse the database
+    dbService.removeAllRoles()
+    dbService.removeAllUsers()
+
+    // Insert the full set of roles into the mock database
+    const roles = tools.getRoleDefinitions()
+    roles.forEach((currentRole) => {
+      dbService.saveRole(currentRole)
+    })
+
+    // @todo
+    // Insert the Guest user into the mock database
   })
 
-  after(async () => {
-    await testUsersDb.close()
+  after(() => {
+    dbService.disconnect()
   })
 
   it('Should return 200 and the guest user when requested', (done) => {
@@ -41,6 +56,7 @@ describe('Users API Endpoint', () => {
       })
   })
 
+  /*
   it('Should return 200 and a non-guest user when requested with a VALID email id', (done) => {
     chai
       .request(app)
@@ -115,6 +131,7 @@ describe('Users API Endpoint', () => {
         done()
       })
   })
+  */
 })
 /* eslint-enable handle-callback-err */
 /* eslint-enable no-unused-expressions */

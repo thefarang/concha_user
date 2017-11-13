@@ -1,31 +1,34 @@
 'use strict'
 
+const log = require('../services/log')
 const express = require('express')
+
 const router = express.Router()
-const User = require('../services/database/schema/user')
 
 // GET /users/guest
 // GET /users/member/email
 // GET /users/member/email/password
 
 // Retrieve the Guest user
-router.get('/guest', (req, res, next) => {
-  User.findOne({ role: 1 }, (err, user) => {
-    if (err) {
-      return next(err)
-    }
-
-    if (user === null) {
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(404)
-      res.json()
-      return
+router.get('/guest', async (req, res, next) => {
+  try {
+    const user = await req.app.get('dbService').findUser({ id: 1 })
+    if (user == null) {
+      // Delegate to 404 middleware
+      log.info({ roleId: req.params.id }, 'Guest user not found')
+      return next()
     }
     res.json(user)
-  })
+  } catch (err) {
+    log.info({
+      err: err.stack
+    }, 'An error occurred whilst retrieving the Guest user')
+    return next(err)
+  }
 })
 
 // Retrieve user based on email only
+/*
 router.get('/member/:email', (req, res, next) => {
   User.findOne({ email: req.params.email }, (err, user) => {
     if (err) {
@@ -84,5 +87,6 @@ router.get('/member/:email/:password', (req, res, next) => {
     })
   })
 })
+*/
 
 module.exports = router
