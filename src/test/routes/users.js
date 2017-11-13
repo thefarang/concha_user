@@ -4,7 +4,6 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 
-const tools = require('../support/tools')
 const dbService = require('../mocks/database')
 const bootApp = require('../../app')
 
@@ -26,13 +25,19 @@ describe('Users API Endpoint', () => {
     dbService.removeAllUsers()
 
     // Insert the full set of roles into the mock database
-    const roles = tools.getRoleDefinitions()
+    const roles = dbService.getRoleDefinitions()
     roles.forEach((currentRole) => {
       dbService.saveRole(currentRole)
     })
 
-    // @todo
     // Insert the Guest user into the mock database
+    dbService.saveUser({
+      email: 'no-reply@concha',
+      password: 'password_not_used',
+      role: 1,
+      created_at: (new Date()).toISOString(),
+      updated_at: (new Date()).toISOString()
+    })
   })
 
   after(() => {
@@ -47,9 +52,8 @@ describe('Users API Endpoint', () => {
       .end((err, res) => {
         expect(res).to.have.status(200)
         expect(res).to.be.json
-
+        
         const responseContents = JSON.parse(res.text)
-        expect(responseContents._id).to.equal('59d6e8be3c602c051508bd71')
         expect(responseContents.role).to.equal(1)
         expect(responseContents.email).to.equal('no-reply@concha')
         done()

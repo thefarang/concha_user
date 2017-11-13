@@ -4,7 +4,6 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 
-const tools = require('../support/tools')
 const dbService = require('../mocks/database')
 const bootApp = require('../../app')
 
@@ -44,7 +43,7 @@ describe('User Role API Endpoint', () => {
     dbService.removeAllRoles()
 
     // Insert the full set of roles into the mock database
-    const roles = tools.getRoleDefinitions()
+    const roles = dbService.getRoleDefinitions()
     roles.forEach((currentRole) => {
       dbService.saveRole(currentRole)
     })

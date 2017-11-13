@@ -1,5 +1,7 @@
 'use strict'
 
+// @todo
+// Remove this crap and replace with a solution similar to that in concha_twitter
 const log = require('../services/log')
 const config = require('config')
 const express = require('express')

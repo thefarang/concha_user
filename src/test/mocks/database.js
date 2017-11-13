@@ -63,6 +63,6 @@ module.exports = {
   removeAllRoles,
   findUser,
   findUsers,
-  saveUser,
-  removeAllUsers
+  removeAllUsers,
+  saveUser
 }

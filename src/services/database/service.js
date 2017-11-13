@@ -142,6 +142,43 @@ const removeAllRoles = () => {
   })
 }
 
+// @todo
+// Should this really be exposed?
+const removeAllUsers = () => {
+  return new Promise((resolve, reject) => {
+    User.remove({}, (err) => {
+      if (err) {
+        log.info({
+          err: err
+        }, 'An error occurred whilst deleting all users')
+        return reject(err)
+      }
+      return resolve()
+    })
+  })
+}
+
+const saveUser = (document) => {
+  return new Promise((resolve, reject) => {
+    const user = new User()
+    user.email = document.email
+    user.password = document.password
+    user.role = document.role
+    user.created_at = document.created_at
+    user.updated_at = document.updated_at
+    user.save(document, (err) => {
+      if (err) {
+        log.info({
+          err: err,
+          document: document
+        }, 'An error occurred saving the User document')
+        return reject(err)
+      }
+      return resolve(user)
+    })
+  })
+}
+
 module.exports = {
   connect,
   disconnect,
@@ -149,5 +186,7 @@ module.exports = {
   findRoles,
   getRoleDefinitions,
   saveRole,
-  removeAllRoles
+  removeAllRoles,
+  removeAllUsers,
+  saveUser
 }
