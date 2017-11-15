@@ -101,13 +101,13 @@ const saveRole = (role) => {
 
 // @todo
 // I dont like this, passing in a query. Change it, and update the mock
-const findRole = (query) => {
+const findRoleById = (id) => {
   return new Promise((resolve, reject) => {
-    RoleSchema.find(query, (err, roleSchema) => {
+    RoleSchema.find({ id: id }, (err, roleSchema) => {
       if (err) {
         log.info({
           err: err,
-          query: query
+          id: id
         }, 'An error occurred whilst finding specific RoleSchema')
         return reject(err)
       }
@@ -279,7 +279,7 @@ module.exports = {
   removeAllRoles,
   getRoleDefinitions,
   saveRole,
-  findRole,
+  findRoleById,
   findRoles,
   removeAllUsers,
   saveUser,

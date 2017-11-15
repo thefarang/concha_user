@@ -32,7 +32,8 @@ router.get('/', async (req, res, next) => {
 // Get specific role
 router.get('/:id', async (req, res, next) => {
   try {
-    const role = await req.app.get('dbService').findRole({ id: parseInt(req.params.id, 10)})
+    const roleId = parseInt(req.params.id, 10)
+    const role = await req.app.get('dbService').findRoleById(roleId)
     if (role == null) {
       // Delegate to 404 middleware
       log.info({ roleId: req.params.id }, 'Role ID not found')

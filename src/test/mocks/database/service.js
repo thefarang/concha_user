@@ -30,10 +30,8 @@ const saveRole = (role) => {
   roles.push(role)
 }
 
-// @todo
-// I dont like this, passing in a query. Change it
-const findRole = (query) => {
-  return roles.find(role => role.id === query.id)
+const findRoleById = (id) => {
+  return roles.find(role => role.id === id)
 }
 
 const findRoles = () => {
@@ -63,7 +61,7 @@ module.exports = {
   removeAllRoles,
   getRoleDefinitions,
   saveRole,
-  findRole,
+  findRoleById,
   findRoles,
   removeAllUsers,
   saveUser,
