@@ -49,7 +49,7 @@ const saveUser = (user) => {
 }
 
 const findUserByEmail = (email) => {
-  return users.find(user => user.email === email)
+  return users.find(user => user.email === email) || null
 }
 
 const isPasswordCorrect = (email, password) => {

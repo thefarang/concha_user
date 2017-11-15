@@ -35,8 +35,10 @@ describe('Users API Endpoint', () => {
       email: 'guest@concha',
       password: 'password_not_used',
       role: 1,
-      created_at: (new Date()).toISOString(),
-      updated_at: (new Date()).toISOString()
+      // createdAt: (new Date()).toISOString(),
+      // updatedAt: (new Date()).toISOString()
+      createdAt: '2017-11-15T13:23:13.241Z',
+      updatedAt: '2017-11-15T13:23:13.241Z'
     })
 
     // Insert a non-guest user into the mock database
@@ -44,8 +46,10 @@ describe('Users API Endpoint', () => {
       email: 'test@test.com',
       password: 'Password_1%',
       role: 2,
-      created_at: (new Date()).toISOString(),
-      updated_at: (new Date()).toISOString()
+      // createdAt: (new Date()).toISOString(),
+      // updatedAt: (new Date()).toISOString()
+      createdAt: '2017-11-15T13:23:14.341Z',
+      updatedAt: '2017-11-15T13:23:14.341Z'
     })
   })
 
@@ -65,8 +69,8 @@ describe('Users API Endpoint', () => {
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('guest@concha')
         expect(responseContents.role).to.equal(1)
-        // @todo
-        // test the createdAt??
+        expect(responseContents.createdAt).to.equal('2017-11-15T13:23:13.241Z')
+        expect(responseContents.updatedAt).to.equal('2017-11-15T13:23:13.241Z')
         done()
       })
   })
@@ -83,8 +87,8 @@ describe('Users API Endpoint', () => {
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('test@test.com')
         expect(responseContents.role).to.equal(2)
-        // @todo
-        // test the createdAt??
+        expect(responseContents.createdAt).to.equal('2017-11-15T13:23:14.341Z')
+        expect(responseContents.updatedAt).to.equal('2017-11-15T13:23:14.341Z')
         done()
       })
   })
@@ -115,8 +119,8 @@ describe('Users API Endpoint', () => {
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('test@test.com')
         expect(responseContents.role).to.equal(2)
-        // @todo
-        // test the createdAt??
+        expect(responseContents.createdAt).to.equal('2017-11-15T13:23:14.341Z')
+        expect(responseContents.updatedAt).to.equal('2017-11-15T13:23:14.341Z')
         done()
       })
   })
@@ -134,8 +138,7 @@ describe('Users API Endpoint', () => {
       })
   })
 
-  /*
-  it('Should return 404 when a non-guest user is requested with an INVALID email id and an VALID password', (done) => {
+  it('Should return 404 when a non-guest user is requested with an INVALID email and an VALID password', (done) => {
     const password = encodeURIComponent('Password_1%')
     chai
       .request(app)
@@ -148,7 +151,6 @@ describe('Users API Endpoint', () => {
         done()
       })
   })
-  */
 })
 /* eslint-enable handle-callback-err */
 /* eslint-enable no-unused-expressions */
