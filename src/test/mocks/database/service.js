@@ -52,8 +52,9 @@ const findUserByEmail = (email) => {
   return users.find(user => user.email === email)
 }
 
-const findUserByEmailAndPassword = (email, password) => {
-  return users.find(user => user.email === email && user.password === password)
+const isPasswordCorrect = (email, password) => {
+  const user = findUserByEmail(email)
+  return (user.password === password) ? true : false
 }
 
 module.exports = {
@@ -67,5 +68,5 @@ module.exports = {
   removeAllUsers,
   saveUser,
   findUserByEmail,
-  findUserByEmailAndPassword
+  isPasswordCorrect
 }

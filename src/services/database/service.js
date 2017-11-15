@@ -200,8 +200,9 @@ const findUserByEmail = (email) => {
     User.findOne({ email: email }, (err, user) => {
       if (err) {
         log.info({
-          err: err
-        }, `An error occurred whilst finding a User with email address: ${email}`)
+          err: err,
+          email: email
+        }, `An error occurred during User email search`)
         return reject(err)
       }
 
@@ -221,20 +222,23 @@ const findUserByEmail = (email) => {
   })
 }
 
-const findUserByEmailAndPassword = (email, password) => {
+const isPasswordCorrect = (email, password) => {
   return new Promise((resolve, reject) => {
-    User.findOne({ email: req.params.email }, '+password', (err, user) => {
+    User.findOne({ email: email }, '+password', (err, user) => {
       if (err) {
         log.info({
           err: err,
-          email: email,
-          password: password
+          email: email
         }, 'Error occurred finding a User with email address, pre-password check')
         return reject(err)
       }
   
       if (user === null) {
-        return resolve(null)
+        // A password check has been requested on a User that does not exist.
+        // This should be treated as an error.
+        const err = new Error(message)
+        err.status = 500
+        return reject(err)
       }
   
       user.comparePassword(password, (err, isMatch) => {
@@ -243,26 +247,25 @@ const findUserByEmailAndPassword = (email, password) => {
             err: err,
             email: email,
             password: password
-          }, 'Error occurred finding a validating User password')
+          }, 'Error occurred validating a User password')
           return reject(err)
         }
 
-        let transformedUser = null
         if (!isMatch) {
-          log.info({
-            err: err,
-            email: email,
-            password: password
-          }, 'User passwords do not match')
-        } else {
-          // Transform the mongo User schema object into a generic JSON object
-          transformedUser = {
-            _id: user._id,
-            email: user.email,
-            role: user.role,
-            createdAt: user.created_at,
-            updatedAt: user.updated_at
-          }
+          const message = 'User passwords do not match'
+          const err = new Error(message)
+          err.status = 401
+          log.info({ email: email, password: password }, message)
+          return reject(err)
+        }
+        
+        // Transform the mongo User schema object into a generic JSON object
+        const transformedUser = {
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at
         }
         return resolve(transformedUser)
       })
@@ -281,5 +284,5 @@ module.exports = {
   removeAllUsers,
   saveUser,
   findUserByEmail,
-  findUserByEmailAndPassword
+  isPasswordCorrect
 }

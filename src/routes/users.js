@@ -53,13 +53,10 @@ router.get('/member/:email', async (req, res, next) => {
 // Retrieve user based on email and password.
 router.get('/member/:email/:password', async (req, res, next) => {
   try {
-    const user =
-      await req.app
-        .get('dbService')
-        .findUserByEmailAndPassword(req.params.email, req.params.password)
-    
-    if (user == null) {
-      // Delegate to 404 middleware
+    const dbService = req.app.get('dbService')
+    const user = await dbService.findUserByEmail(req.params.email)
+    if (user === null) {
+      // Delegate to 404 middleware. We can't find the user.
       log.info({ 
         email: req.params.email,
         password:  req.params.password 
@@ -67,6 +64,20 @@ router.get('/member/:email/:password', async (req, res, next) => {
       return next()
     }
 
+    const isPasswordCorrect = dbService.isPasswordCorrect(req.params.email, req.params.password)
+    if (!isPasswordCorrect) {
+      // Delegate to error-handler middleware.
+      const message = 'User password is incorrect'
+      const err = new Error(message)
+      err.status = 401
+      log.info({ 
+        email: req.params.email,
+        password:  req.params.password 
+      }, message)
+      return next(err)
+    }
+
+    // Authentication was successful.
     res.json(user)
   } catch (err) {
     log.info({
