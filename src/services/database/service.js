@@ -6,7 +6,7 @@
 const config = require('config')
 const log = require('../log')
 const mongoose = require('mongoose')
-const Role = require('./schema/role')
+const RoleSchema = require('./schema/role-schema')
 const UserSchema = require('./schema/user-schema')
 
 const ObjectId = mongoose.Types.ObjectId
@@ -31,7 +31,7 @@ const disconnect = () => {
 
 const removeAllRoles = () => {
   return new Promise((resolve, reject) => {
-    Role.remove({}, (err) => {
+    RoleSchema.remove({}, (err) => {
       if (err) {
         log.info({
           err: err
@@ -80,20 +80,20 @@ const getRoleDefinitions = () => {
   ]
 }
 
-const saveRole = (roleIn) => {
+const saveRole = (role) => {
   return new Promise((resolve, reject) => {
-    const role = new Role()
-    role.id = roleIn.id
-    role.name = roleIn.name
-    role.created_at = roleIn.createdAt
-    role.updated_at = roleIn.updatedAt
-    role.save((err) => {
+    const roleSchema = new RoleSchema()
+    roleSchema.id = role.id
+    roleSchema.name = role.name
+    roleSchema.created_at = role.createdAt
+    roleSchema.updated_at = role.updatedAt
+    roleSchema.save((err) => {
       if (err) {
-        log.info({ err: err, role: roleIn }, 'Unable to create role')
+        log.info({ err: err, role: role }, 'Unable to create RoleSchema')
         return reject(err)
       }
 
-      log.info({ role: roleIn }, 'Populated role successfully')
+      log.info({ role: role }, 'Populated RoleSchema successfully')
       resolve()
     })
   })
@@ -103,48 +103,48 @@ const saveRole = (roleIn) => {
 // I dont like this, passing in a query. Change it, and update the mock
 const findRole = (query) => {
   return new Promise((resolve, reject) => {
-    Role.find(query, (err, role) => {
+    RoleSchema.find(query, (err, roleSchema) => {
       if (err) {
         log.info({
           err: err,
           query: query
-        }, 'An error occurred whilst finding specific user role')
+        }, 'An error occurred whilst finding specific RoleSchema')
         return reject(err)
       }
 
-      // Transform the mongo Role schema object into a generic JSON object
-      const transformedRole = {
-        id: role.id,
-        name: role.name,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
+      // Transform the mongo RoleSchema object into a Role object
+      const role = {
+        id: roleSchema.id,
+        name: roleSchema.name,
+        createdAt: roleSchema.created_at,
+        updatedAt: roleSchema.updated_at
       }
-      return resolve(transformedRole)
+      return resolve(role)
     })
   })
 }
 
 const findRoles = () => {
   return new Promise((resolve, reject) => {
-    Role.find((err, roles) => {
+    RoleSchema.find((err, roleSchemas) => {
       if (err) {
         log.info({
           err: err
-        }, 'An error occurred whilst finding all user roles')
+        }, 'An error occurred whilst finding all RoleSchemas')
         return reject(err)
       }
 
-      // Transform the mongo Role schema objects into generic JSON objects
-      const transformedRoles = []
-      roles.forEach(role => {
-        transformedRoles.push({
-          id: role.id,
-          name: role.name,
-          createdAt: role.createdAt,
-          updatedAt: role.updatedAt
+      // Transform the mongo RoleSchema objects into Role objects
+      const roles = []
+      roleSchemas.forEach(roleSchema => {
+        roles.push({
+          id: roleSchema.id,
+          name: roleSchema.name,
+          createdAt: roleSchema.created_at,
+          updatedAt: roleSchema.updated_at
         })
       })
-      return resolve(transformedRoles)
+      return resolve(roles)
     })
   })
 }
@@ -157,7 +157,7 @@ const removeAllUsers = () => {
       if (err) {
         log.info({
           err: err
-        }, 'An error occurred whilst deleting all users')
+        }, 'An error occurred whilst deleting all UserSchemas')
         return reject(err)
       }
       return resolve()
@@ -168,20 +168,20 @@ const removeAllUsers = () => {
 // @todo
 // Do we need a getGuestUserDefinition()?
 
-const saveUser = (document) => {
+const saveUser = (user) => {
   return new Promise((resolve, reject) => {
     const userSchema = new UserSchema()
-    userSchema.email = document.email
-    userSchema.password = document.password
-    userSchema.role = document.role
-    userSchema.created_at = document.created_at
-    userSchema.updated_at = document.updated_at
+    userSchema.email = user.email
+    userSchema.password = user.password
+    userSchema.role = user.role
+    userSchema.created_at = user.createdAt
+    userSchema.updated_at = user.updatedAt
     userSchema.save((err) => {
       if (err) {
         log.info({
           err: err,
-          document: document
-        }, 'An error occurred saving the User document')
+          user: user
+        }, 'An error occurred saving the UserSchema')
         return reject(err)
       }
       return resolve({
@@ -202,14 +202,14 @@ const findUserByEmail = (email) => {
         log.info({
           err: err,
           email: email
-        }, `An error occurred during User email search`)
+        }, `An error occurred locating UserSchema`)
         return reject(err)
       }
 
-      let transformedUser = null
+      let user = null
       if (userSchema !== null) {
-        // Transform the mongo User schema object into a generic JSON object
-        transformedUser = {
+        // Transform the mongo UserSchema object into a User object
+        user = {
           _id: userSchema._id,
           email: userSchema.email,
           role: userSchema.role,
@@ -217,7 +217,7 @@ const findUserByEmail = (email) => {
           updatedAt: userSchema.updated_at
         }
       }
-      return resolve(transformedUser)
+      return resolve(user)
     })
   })
 }
@@ -229,7 +229,7 @@ const isPasswordCorrect = (email, password) => {
         log.info({
           err: err,
           email: email
-        }, 'Error occurred finding a User with email address, pre-password check')
+        }, 'An error occurred locating UserSchema, pre-password check')
         return reject(err)
       }
   
@@ -241,13 +241,13 @@ const isPasswordCorrect = (email, password) => {
         return reject(err)
       }
   
-      user.comparePassword(password, (err, isMatch) => {
+      userSchema.comparePassword(password, (err, isMatch) => {
         if (err) {
           log.info({
             err: err,
             email: email,
             password: password
-          }, 'Error occurred validating a User password')
+          }, 'Error occurred validating a UserSchema password')
           return reject(err)
         }
 
@@ -259,15 +259,15 @@ const isPasswordCorrect = (email, password) => {
           return reject(err)
         }
         
-        // Transform the mongo User schema object into a generic JSON object
-        const transformedUser = {
+        // Transform the mongo UserSchema object into a User object
+        const user = {
           _id: userSchema._id,
           email: userSchema.email,
           role: userSchema.role,
           createdAt: userSchema.created_at,
           updatedAt: userSchema.updated_at
         }
-        return resolve(transformedUser)
+        return resolve(user)
       })
     })
   })

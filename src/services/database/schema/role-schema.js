@@ -26,7 +26,5 @@ var RoleSchema = new Schema({
   collection: 'role'
 })
 
-// Generate a Model from the Schema.
-var Role = mongoose.model('Role', RoleSchema)
-
-module.exports = Role
+// Generate a mongo Model from the Schema.
+module.exports = mongoose.model('RoleSchema', RoleSchema)
