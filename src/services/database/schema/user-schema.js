@@ -47,29 +47,29 @@ let UserSchema = new Schema({
 // The following article uses the function arrow syntax without problems:
 // https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
 UserSchema.pre('save', function (next) {
-  let user = this
+  let userSchema = this
 
-  // only hash the password if it has been modified (or is new)
-  if (!user.isModified('password')) return next()
+  // Only hash the password if it has been modified (or is new)
+  if (!userSchema.isModified('password')) return next()
 
-  // generate a salt
+  // Generate a salt
   bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
     if (err) return next(err)
 
-      // hash the password using our new salt
-    bcrypt.hash(user.password, salt, function (err, hash) {
+    // Hash the password using our new salt
+    bcrypt.hash(userSchema.password, salt, function (err, hash) {
       if (err) return next(err)
 
-          // override the cleartext password with the hashed one
-      user.password = hash
+      // Override the cleartext password with the hashed one
+      userSchema.password = hash
       next()
     })
   })
 })
 
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
-  let user = this
-  bcrypt.compare(candidatePassword, user.password, function (err, isMatch) {
+  let userSchema = this
+  bcrypt.compare(candidatePassword, userSchema.password, function (err, isMatch) {
     if (err) return cb(err)
     cb(null, isMatch)
   })
