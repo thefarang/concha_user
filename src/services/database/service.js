@@ -7,7 +7,7 @@ const config = require('config')
 const log = require('../log')
 const mongoose = require('mongoose')
 const Role = require('./schema/role')
-const User = require('./schema/user')
+const UserSchema = require('./schema/user-schema')
 
 const ObjectId = mongoose.Types.ObjectId
 let isConnected = false
@@ -153,7 +153,7 @@ const findRoles = () => {
 // Should this really be exposed?
 const removeAllUsers = () => {
   return new Promise((resolve, reject) => {
-    User.remove({}, (err) => {
+    UserSchema.remove({}, (err) => {
       if (err) {
         log.info({
           err: err
@@ -170,13 +170,13 @@ const removeAllUsers = () => {
 
 const saveUser = (document) => {
   return new Promise((resolve, reject) => {
-    const user = new User()
-    user.email = document.email
-    user.password = document.password
-    user.role = document.role
-    user.created_at = document.created_at
-    user.updated_at = document.updated_at
-    user.save((err) => {
+    const userSchema = new UserSchema()
+    userSchema.email = document.email
+    userSchema.password = document.password
+    userSchema.role = document.role
+    userSchema.created_at = document.created_at
+    userSchema.updated_at = document.updated_at
+    userSchema.save((err) => {
       if (err) {
         log.info({
           err: err,
@@ -185,11 +185,11 @@ const saveUser = (document) => {
         return reject(err)
       }
       return resolve({
-        _id: user._id,
-        email: user.email,
-        role: user.role,
-        createdAt: user.created_at,
-        updatedAt: user.updated_at
+        _id: userSchema._id,
+        email: userSchema.email,
+        role: userSchema.role,
+        createdAt: userSchema.created_at,
+        updatedAt: userSchema.updated_at
       })
     })
   })
@@ -197,7 +197,7 @@ const saveUser = (document) => {
 
 const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
-    User.findOne({ email: email }, (err, user) => {
+    UserSchema.findOne({ email: email }, (err, userSchema) => {
       if (err) {
         log.info({
           err: err,
@@ -207,14 +207,14 @@ const findUserByEmail = (email) => {
       }
 
       let transformedUser = null
-      if (user !== null) {
+      if (userSchema !== null) {
         // Transform the mongo User schema object into a generic JSON object
         transformedUser = {
-          _id: user._id,
-          email: user.email,
-          role: user.role,
-          createdAt: user.created_at,
-          updatedAt: user.updated_at
+          _id: userSchema._id,
+          email: userSchema.email,
+          role: userSchema.role,
+          createdAt: userSchema.created_at,
+          updatedAt: userSchema.updated_at
         }
       }
       return resolve(transformedUser)
@@ -224,7 +224,7 @@ const findUserByEmail = (email) => {
 
 const isPasswordCorrect = (email, password) => {
   return new Promise((resolve, reject) => {
-    User.findOne({ email: email }, '+password', (err, user) => {
+    UserSchema.findOne({ email: email }, '+password', (err, userSchema) => {
       if (err) {
         log.info({
           err: err,
@@ -233,7 +233,7 @@ const isPasswordCorrect = (email, password) => {
         return reject(err)
       }
   
-      if (user === null) {
+      if (userSchema === null) {
         // A password check has been requested on a User that does not exist.
         // This should be treated as an error.
         const err = new Error(message)
@@ -261,11 +261,11 @@ const isPasswordCorrect = (email, password) => {
         
         // Transform the mongo User schema object into a generic JSON object
         const transformedUser = {
-          _id: user._id,
-          email: user.email,
-          role: user.role,
-          createdAt: user.created_at,
-          updatedAt: user.updated_at
+          _id: userSchema._id,
+          email: userSchema.email,
+          role: userSchema.role,
+          createdAt: userSchema.created_at,
+          updatedAt: userSchema.updated_at
         }
         return resolve(transformedUser)
       })

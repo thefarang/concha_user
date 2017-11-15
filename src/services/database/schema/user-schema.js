@@ -76,6 +76,4 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
 }
 
 // Generate a Model from the Schema.
-let User = mongoose.model('User', UserSchema)
-
-module.exports = User
+module.exports = mongoose.model('UserSchema', UserSchema)
