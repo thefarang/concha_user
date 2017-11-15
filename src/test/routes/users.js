@@ -42,7 +42,7 @@ describe('Users API Endpoint', () => {
     // Insert a non-guest user into the mock database
     dbService.saveUser({
       email: 'test@test.com',
-      password: 'Password1',
+      password: 'Password_1%',
       role: 2,
       created_at: (new Date()).toISOString(),
       updated_at: (new Date()).toISOString()
@@ -63,8 +63,10 @@ describe('Users API Endpoint', () => {
         expect(res).to.be.json
         
         const responseContents = JSON.parse(res.text)
-        expect(responseContents.role).to.equal(1)
         expect(responseContents.email).to.equal('guest@concha')
+        expect(responseContents.role).to.equal(1)
+        // @todo
+        // test the createdAt??
         done()
       })
   })
@@ -79,13 +81,14 @@ describe('Users API Endpoint', () => {
         expect(res).to.be.json
 
         const responseContents = JSON.parse(res.text)
-        expect(responseContents.role).to.equal(2)
         expect(responseContents.email).to.equal('test@test.com')
+        expect(responseContents.role).to.equal(2)
+        // @todo
+        // test the createdAt??
         done()
       })
   })
 
-  /*
   it('Should return 404 when a non-guest user is requested with an INVALID email id', (done) => {
     chai
       .request(app)
@@ -99,7 +102,7 @@ describe('Users API Endpoint', () => {
       })
   })
 
-  it('Should return 200 and a non-guest user when requested with a VALID email id and password', (done) => {
+  it('Should return 200 and a non-guest user when requested with a VALID email and password', (done) => {
     const password = encodeURIComponent('Password_1%')
     chai
       .request(app)
@@ -110,14 +113,15 @@ describe('Users API Endpoint', () => {
         expect(res).to.be.json
 
         const responseContents = JSON.parse(res.text)
-        expect(responseContents._id).to.equal('59d6e8be3c602c051508bd72')
-        expect(responseContents.role).to.equal(2)
         expect(responseContents.email).to.equal('test@test.com')
+        expect(responseContents.role).to.equal(2)
+        // @todo
+        // test the createdAt??
         done()
       })
   })
 
-  it('Should return 401 when a non-guest user is requested with a VALID email id and an INVALID password', (done) => {
+  it('Should return 401 when a non-guest user is requested with a VALID email and an INVALID password', (done) => {
     chai
       .request(app)
       .get(`/api/v1/users/member/test@test.com/invalid-password`)
@@ -130,6 +134,7 @@ describe('Users API Endpoint', () => {
       })
   })
 
+  /*
   it('Should return 404 when a non-guest user is requested with an INVALID email id and an VALID password', (done) => {
     const password = encodeURIComponent('Password_1%')
     chai

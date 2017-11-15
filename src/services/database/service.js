@@ -176,7 +176,6 @@ const saveUser = (document) => {
     user.role = document.role
     user.created_at = document.created_at
     user.updated_at = document.updated_at
-    // user.save(document, (err) => {
     user.save((err) => {
       if (err) {
         log.info({
@@ -185,12 +184,18 @@ const saveUser = (document) => {
         }, 'An error occurred saving the User document')
         return reject(err)
       }
-      return resolve(user)
+      return resolve({
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at
+      })
     })
   })
 }
 
-const findUser = (email) => {
+const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     User.findOne({ email: email }, (err, user) => {
       if (err) {
@@ -204,6 +209,7 @@ const findUser = (email) => {
       if (user !== null) {
         // Transform the mongo User schema object into a generic JSON object
         transformedUser = {
+          _id: user._id,
           email: user.email,
           role: user.role,
           createdAt: user.created_at,
@@ -211,6 +217,55 @@ const findUser = (email) => {
         }
       }
       return resolve(transformedUser)
+    })
+  })
+}
+
+const findUserByEmailAndPassword = (email, password) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ email: req.params.email }, '+password', (err, user) => {
+      if (err) {
+        log.info({
+          err: err,
+          email: email,
+          password: password
+        }, 'Error occurred finding a User with email address, pre-password check')
+        return reject(err)
+      }
+  
+      if (user === null) {
+        return resolve(null)
+      }
+  
+      user.comparePassword(password, (err, isMatch) => {
+        if (err) {
+          log.info({
+            err: err,
+            email: email,
+            password: password
+          }, 'Error occurred finding a validating User password')
+          return reject(err)
+        }
+
+        let transformedUser = null
+        if (!isMatch) {
+          log.info({
+            err: err,
+            email: email,
+            password: password
+          }, 'User passwords do not match')
+        } else {
+          // Transform the mongo User schema object into a generic JSON object
+          transformedUser = {
+            _id: user._id,
+            email: user.email,
+            role: user.role,
+            createdAt: user.created_at,
+            updatedAt: user.updated_at
+          }
+        }
+        return resolve(transformedUser)
+      })
     })
   })
 }
@@ -225,5 +280,6 @@ module.exports = {
   findRoles,
   removeAllUsers,
   saveUser,
-  findUser
+  findUserByEmail,
+  findUserByEmailAndPassword
 }

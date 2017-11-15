@@ -48,8 +48,12 @@ const saveUser = (user) => {
   users.push(user)
 }
 
-const findUser = (email) => {
+const findUserByEmail = (email) => {
   return users.find(user => user.email === email)
+}
+
+const findUserByEmailAndPassword = (email, password) => {
+  return users.find(user => user.email === email && user.password === password)
 }
 
 module.exports = {
@@ -62,5 +66,6 @@ module.exports = {
   findRoles,
   removeAllUsers,
   saveUser,
-  findUser
+  findUserByEmail,
+  findUserByEmailAndPassword
 }
