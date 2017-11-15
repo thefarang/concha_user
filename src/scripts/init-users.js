@@ -15,7 +15,7 @@ const init = async () => {
     const guestRole = roleDefinitions.find(currentRole => currentRole.id === 1)
     log.info({}, `Populating the ${guestRole.name} User...`)
     await dbService.saveUser({
-      email: 'no-reply@concha',
+      email: 'guest@concha',
       password: 'password_not_used',
       role: guestRole.id,
       created_at: (new Date()).toISOString(),

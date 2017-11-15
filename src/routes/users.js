@@ -12,10 +12,12 @@ const router = express.Router()
 // Retrieve the Guest user
 router.get('/guest', async (req, res, next) => {
   try {
-    const user = await req.app.get('dbService').findUser({ id: 1 })
+    // @todo
+    // 'guest@concha' needs to be defined somewhere formally
+    const user = await req.app.get('dbService').findUser('guest@concha')
     if (user == null) {
       // Delegate to 404 middleware
-      log.info({ roleId: req.params.id }, 'Guest user not found')
+      log.info({}, 'Guest user not found')
       return next()
     }
     res.json(user)
@@ -28,24 +30,26 @@ router.get('/guest', async (req, res, next) => {
 })
 
 // Retrieve user based on email only
-/*
-router.get('/member/:email', (req, res, next) => {
-  User.findOne({ email: req.params.email }, (err, user) => {
-    if (err) {
-      return next(err)
-    }
-
-    if (user === null) {
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(404)
-      res.json()
-      return
+router.get('/member/:email', async (req, res, next) => {
+  try {
+    const user = await req.app.get('dbService').findUser(req.params.email)
+    if (user == null) {
+      // Delegate to 404 middleware
+      log.info({ email: req.params.email }, 'User not found')
+      return next()
     }
     res.json(user)
-  })
+  } catch (err) {
+    log.info({
+      err: err.stack,
+      email: req.params.email
+    }, 'An error occurred whilst retrieving the User')
+    return next(err)
+  }
 })
 
 // Retrieve user based on email and password.
+/*
 router.get('/member/:email/:password', (req, res, next) => {
   User.findOne({ email: req.params.email }, '+password', (err, user) => {
     if (err) {

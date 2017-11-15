@@ -32,9 +32,18 @@ describe('Users API Endpoint', () => {
 
     // Insert the Guest user into the mock database
     dbService.saveUser({
-      email: 'no-reply@concha',
+      email: 'guest@concha',
       password: 'password_not_used',
       role: 1,
+      created_at: (new Date()).toISOString(),
+      updated_at: (new Date()).toISOString()
+    })
+
+    // Insert a non-guest user into the mock database
+    dbService.saveUser({
+      email: 'test@test.com',
+      password: 'Password1',
+      role: 2,
       created_at: (new Date()).toISOString(),
       updated_at: (new Date()).toISOString()
     })
@@ -55,12 +64,11 @@ describe('Users API Endpoint', () => {
         
         const responseContents = JSON.parse(res.text)
         expect(responseContents.role).to.equal(1)
-        expect(responseContents.email).to.equal('no-reply@concha')
+        expect(responseContents.email).to.equal('guest@concha')
         done()
       })
   })
 
-  /*
   it('Should return 200 and a non-guest user when requested with a VALID email id', (done) => {
     chai
       .request(app)
@@ -71,13 +79,13 @@ describe('Users API Endpoint', () => {
         expect(res).to.be.json
 
         const responseContents = JSON.parse(res.text)
-        expect(responseContents._id).to.equal('59d6e8be3c602c051508bd72')
         expect(responseContents.role).to.equal(2)
         expect(responseContents.email).to.equal('test@test.com')
         done()
       })
   })
 
+  /*
   it('Should return 404 when a non-guest user is requested with an INVALID email id', (done) => {
     chai
       .request(app)

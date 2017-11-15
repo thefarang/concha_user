@@ -99,6 +99,8 @@ const saveRole = (roleIn) => {
   })
 }
 
+// @todo
+// I dont like this, passing in a query. Change it, and update the mock
 const findRole = (query) => {
   return new Promise((resolve, reject) => {
     Role.find(query, (err, role) => {
@@ -163,6 +165,9 @@ const removeAllUsers = () => {
   })
 }
 
+// @todo
+// Do we need a getGuestUserDefinition()?
+
 const saveUser = (document) => {
   return new Promise((resolve, reject) => {
     const user = new User()
@@ -185,6 +190,31 @@ const saveUser = (document) => {
   })
 }
 
+const findUser = (email) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ email: email }, (err, user) => {
+      if (err) {
+        log.info({
+          err: err
+        }, `An error occurred whilst finding a User with email address: ${email}`)
+        return reject(err)
+      }
+
+      let transformedUser = null
+      if (user !== null) {
+        // Transform the mongo User schema object into a generic JSON object
+        transformedUser = {
+          email: user.email,
+          role: user.role,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at
+        }
+      }
+      return resolve(transformedUser)
+    })
+  })
+}
+
 module.exports = {
   connect,
   disconnect,
@@ -194,5 +224,6 @@ module.exports = {
   findRole,
   findRoles,
   removeAllUsers,
-  saveUser
+  saveUser,
+  findUser
 }
