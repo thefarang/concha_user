@@ -1,13 +1,12 @@
 'use strict'
 
-// @todo
-// Rationalise this and the mocks.database to ensure consistency
-
 const config = require('config')
 const log = require('../log')
 const mongoose = require('mongoose')
 const RoleSchema = require('./schema/role-schema')
 const UserSchema = require('./schema/user-schema')
+const Role = require('../../models/role')
+const User = require('../../models/user')
 
 const ObjectId = mongoose.Types.ObjectId
 let isConnected = false
@@ -27,57 +26,6 @@ const disconnect = () => {
     log.info({}, 'Closed Mongo connection successfully. Exiting...')
     process.exit(0)
   })
-}
-
-const removeAllRoles = () => {
-  return new Promise((resolve, reject) => {
-    RoleSchema.remove({}, (err) => {
-      if (err) {
-        log.info({
-          err: err
-        }, 'An error occurred whilst deleting all roles')
-        return reject(err)
-      }
-      return resolve()
-    })
-  })
-}
-
-// @todo
-// Extract all this to a library?
-const getRoleDefinitions = () => {
-  return [
-    {
-      id: 1,
-      name: 'Guest',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
-    },
-    {
-      id: 2,
-      name: 'Blogger',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
-    },
-    {
-      id: 3,
-      name: 'Enhanced Blogger',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
-    },
-    {
-      id: 4,
-      name: 'Service Provider',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
-    },
-    {
-      id: 5,
-      name: 'Enhanced Service Provider',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
-    },
-  ]
 }
 
 const saveRole = (role) => {
@@ -113,12 +61,12 @@ const findRoleById = (id) => {
       }
 
       // Transform the mongo RoleSchema object into a Role object
-      const role = {
-        id: roleSchema.id,
-        name: roleSchema.name,
-        createdAt: roleSchema.created_at,
-        updatedAt: roleSchema.updated_at
-      }
+      const role = new Role(
+        roleSchema.id,
+        roleSchema.name,
+        roleSchema.created_at,
+        roleSchema.updated_at
+      )
       return resolve(role)
     })
   })
@@ -137,36 +85,17 @@ const findRoles = () => {
       // Transform the mongo RoleSchema objects into Role objects
       const roles = []
       roleSchemas.forEach(roleSchema => {
-        roles.push({
-          id: roleSchema.id,
-          name: roleSchema.name,
-          createdAt: roleSchema.created_at,
-          updatedAt: roleSchema.updated_at
-        })
+        roles.push(new Role(
+          roleSchema.id,
+          roleSchema.name,
+          roleSchema.created_at,
+          roleSchema.updated_at
+        ))
       })
       return resolve(roles)
     })
   })
 }
-
-// @todo
-// Should this really be exposed?
-const removeAllUsers = () => {
-  return new Promise((resolve, reject) => {
-    UserSchema.remove({}, (err) => {
-      if (err) {
-        log.info({
-          err: err
-        }, 'An error occurred whilst deleting all UserSchemas')
-        return reject(err)
-      }
-      return resolve()
-    })
-  })
-}
-
-// @todo
-// Do we need a getGuestUserDefinition()?
 
 const saveUser = (user) => {
   return new Promise((resolve, reject) => {
@@ -184,13 +113,15 @@ const saveUser = (user) => {
         }, 'An error occurred saving the UserSchema')
         return reject(err)
       }
-      return resolve({
-        _id: userSchema._id,
-        email: userSchema.email,
-        role: userSchema.role,
-        createdAt: userSchema.created_at,
-        updatedAt: userSchema.updated_at
-      })
+
+      return resolve(new User(
+        userSchema._id,
+        userSchema.email,
+        userSchema.password,
+        userSchema.role,
+        userSchema.created_at,
+        userSchema.updated_at
+      ))
     })
   })
 }
@@ -209,17 +140,35 @@ const findUserByEmail = (email) => {
       let user = null
       if (userSchema !== null) {
         // Transform the mongo UserSchema object into a User object
-        user = {
-          _id: userSchema._id,
-          email: userSchema.email,
-          role: userSchema.role,
-          createdAt: userSchema.created_at,
-          updatedAt: userSchema.updated_at
-        }
+        user = new User(
+          userSchema._id,
+          userSchema.email,
+          userSchema.role,
+          userSchema.created_at,
+          userSchema.updated_at
+        )
       }
       return resolve(user)
     })
   })
+}
+
+const removeUser = (email) => {
+  console.log('removeUser() - Not yet implemented')
+  /*
+  return new Promise((resolve, reject) => {
+    UserSchema.remove({ email: email }, (err) => {
+      if (err) {
+        log.info({
+          err: err,
+          email: email
+        }, 'An error occurred whilst deleting UserSchema')
+        return reject(err)
+      }
+      return resolve()
+    })
+  })
+  */
 }
 
 const isPasswordCorrect = (email, password) => {
@@ -260,13 +209,13 @@ const isPasswordCorrect = (email, password) => {
         }
         
         // Transform the mongo UserSchema object into a User object
-        const user = {
-          _id: userSchema._id,
-          email: userSchema.email,
-          role: userSchema.role,
-          createdAt: userSchema.created_at,
-          updatedAt: userSchema.updated_at
-        }
+        const user = new User(
+          userSchema._id,
+          userSchema.email,
+          userSchema.role,
+          userSchema.created_at,
+          userSchema.updated_at
+        )
         return resolve(user)
       })
     })
@@ -276,13 +225,11 @@ const isPasswordCorrect = (email, password) => {
 module.exports = {
   connect,
   disconnect,
-  removeAllRoles,
-  getRoleDefinitions,
   saveRole,
   findRoleById,
   findRoles,
-  removeAllUsers,
   saveUser,
   findUserByEmail,
+  removeUser,
   isPasswordCorrect
 }

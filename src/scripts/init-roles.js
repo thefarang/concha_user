@@ -2,31 +2,36 @@
 
 const log = require('../services/log')
 const dbService = require('../services/database/service')
+const dbRolesData = require('./data/roles')
+const Role = require('../models/role')
 
 const init = async () => {
   try {
     log.info({}, 'Connecting to the dbase...')
     dbService.connect()
 
-    log.info({}, 'Cleansing the Roles collection...')
-    await dbService.removeAllRoles()
-
     log.info({}, 'Populating the Roles...')
     const rolePromises = []
-    const roleDefinitions = dbService.getRoleDefinitions()
-    roleDefinitions.forEach((currentRoleDefinition) => {
+    const rolesData = dbRolesData.getRolesData()
+    rolesData.forEach((currentRoleData) => {
+
+      // @todo
+      // Check to see if current Role already exists. If yes, see if it
+      // needs to be modified, and modify if necessary. Then proceed to
+      // the next Role.
+      
       rolePromises.push(new Promise(async (resolve, reject) => {
         try {
-          log.info({}, `Populating the ${currentRoleDefinition.name} Role...`)
-          await dbService.saveRole({
-            id: currentRoleDefinition.id,
-            name: currentRoleDefinition.name,
-            createdAt: currentRoleDefinition.createdAt,
-            updatedAt: currentRoleDefinition.updatedAt
-          })
+          log.info({}, `Populating the ${currentRoleData.name} Role...`)
+          await dbService.saveRole(new Role(
+            currentRoleData.id,
+            currentRoleData.name,
+            currentRoleData.createdAt,
+            currentRoleData.updatedAt
+          ))
           return resolve()
         } catch (err) {
-          log.info({ err: err }, `An error occurred populating the ${currentRoleDefinition.name} Role...`)
+          log.info({ err: err }, `An error occurred populating the ${currentRoleData.name} Role...`)
           return reject(err)
         }
       }))

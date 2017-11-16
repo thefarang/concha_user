@@ -1,29 +1,49 @@
 'use strict'
 
-// @todo
-// Rationalise this and the database.service to ensure consistency
+const dbRolesData = require('../../../scripts/data/roles')
+const dbUsersData = require('../../../scripts/data/users')
+const Role = require('../../../models/role')
+const User = require('../../../models/user')
 
-const dbService = require('../../../services/database/service')
-
-let roles = []
-let users = []
+let roles = null
+let users = null
 
 // @todo
 // Implement this as a class, adding the connect() and disconnect() to
 // the constructor. This means that all client code needs to do is
 // instantiate the class.
+
 const connect = () => {
+  // Reset
+  roles = []
+  users = []
+
+  // Insert the Roles into the mock database service
+  const rolesData = dbRolesData.getRolesData()
+  rolesData.forEach((currentRoleData) => {
+    roles.push(new Role(
+      currentRoleData.id,
+      currentRoleData.name,
+      currentRoleData.createdAt,
+      currentRoleData.updatedAt
+    ))
+  })
+
+  // Insert the default Users into the mock database service
+  const usersData = dbUsersData.getUsersData()
+  usersData.forEach((currentUserData) => {
+    users.push(new User(
+      currentUserData.id,
+      currentUserData.email,
+      currentUserData.password,
+      currentUserData.role,
+      currentUserData.createdAt,
+      currentUserData.updatedAt
+    ))
+  })
 }
 
 const disconnect = () => {
-}
-
-const removeAllRoles = () => {
-  roles = []
-}
-
-const getRoleDefinitions = () => {
-  return dbService.getRoleDefinitions()
 }
 
 const saveRole = (role) => {
@@ -38,16 +58,16 @@ const findRoles = () => {
   return roles
 }
 
-const removeAllUsers = () => {
-  users = []
-}
-
 const saveUser = (user) => {
   users.push(user)
 }
 
 const findUserByEmail = (email) => {
   return users.find(user => user.email === email) || null
+}
+
+const removeUser = (email) => {
+  console.log('removeUser() - Not yet implemented')
 }
 
 const isPasswordCorrect = (email, password) => {
@@ -58,13 +78,11 @@ const isPasswordCorrect = (email, password) => {
 module.exports = {
   connect,
   disconnect,
-  removeAllRoles,
-  getRoleDefinitions,
   saveRole,
   findRoleById,
   findRoles,
-  removeAllUsers,
   saveUser,
   findUserByEmail,
+  removeUser,
   isPasswordCorrect
 }
