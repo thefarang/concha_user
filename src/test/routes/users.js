@@ -3,12 +3,11 @@
 const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
-
 const dbFacade = require('../mocks/database/facade')
-const bootApp = require('../../app')
+const app = require('../../app')
 const User = require('../../models/user')
 
-let app = null
+let appInstance = null
 chai.use(chaiHttp)
 
 /* eslint-disable no-unused-expressions */
@@ -17,9 +16,6 @@ describe('Users API Endpoint', () => {
   before(() => {
     // Connect to the database
     dbFacade.connect()
-
-    // Insert app dependencies
-    app = bootApp(dbFacade)
 
     // Insert a non-guest user into the mock database
     dbFacade.getUserActions().saveUser(new User(
@@ -32,6 +28,9 @@ describe('Users API Endpoint', () => {
       '2017-11-15T13:23:14.341Z',
       '2017-11-15T13:23:14.341Z'
     ))
+
+    // Insert app dependencies into a new appInstance
+    appInstance = app(dbFacade)
   })
 
   after(() => {
@@ -40,7 +39,7 @@ describe('Users API Endpoint', () => {
 
   it('Should return 200 and the guest user when requested', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/guest`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -58,7 +57,7 @@ describe('Users API Endpoint', () => {
 
   it('Should return 200 and a non-guest user when requested with a VALID email id', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/member/test@test.com`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -76,7 +75,7 @@ describe('Users API Endpoint', () => {
 
   it('Should return 404 when a non-guest user is requested with an INVALID email id', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/member/invalid@test.com`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -90,7 +89,7 @@ describe('Users API Endpoint', () => {
   it('Should return 200 and a non-guest user when requested with a VALID email and password', (done) => {
     const password = encodeURIComponent('Password_1%')
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/member/test@test.com/${password}`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -108,7 +107,7 @@ describe('Users API Endpoint', () => {
 
   it('Should return 401 when a non-guest user is requested with a VALID email and an INVALID password', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/member/test@test.com/invalid-password`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -122,7 +121,7 @@ describe('Users API Endpoint', () => {
   it('Should return 404 when a non-guest user is requested with an INVALID email and an VALID password', (done) => {
     const password = encodeURIComponent('Password_1%')
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/users/member/invalid@test.com/${password}`)
       .set('Accept', 'application/json')
       .end((err, res) => {

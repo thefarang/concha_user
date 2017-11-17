@@ -9,14 +9,9 @@ let roles = null
 let users = null
 
 const connect = () => {
-  // Reset
-  roles = []
-  users = []
-
-  // Insert the Roles into the mock database service
+  // Reset the Roles int the mock database service
+  // Reset the default Users in the mock database service
   roles = dbRoles.getRoles()
-
-  // Insert the default Users into the mock database service
   users = dbUsers.getDefaultUsers()
 }
 

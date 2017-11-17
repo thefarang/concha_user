@@ -14,7 +14,14 @@ const SALT_WORK_FACTOR = 10
 // Convert to arrow function notation.
 
 let UserSchema = new Schema({
-  // _id will be created by default
+  // id holds the string value of _id. This provides for a unique ID, whilst being database
+  // agnostic. This value can be used across microservices.
+  id: {
+    type: String,
+    trim: true,
+    required: true,
+    index: { unique: true }
+  },
   email: {
     type: String,
     trim: true,
