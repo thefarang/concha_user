@@ -14,17 +14,21 @@ router.get('/guest', async (req, res, next) => {
   try {
     // @todo
     // 'guest@concha' needs to be defined somewhere formally
-    const user = await req.app.get('dbService').findUserByEmail('guest@concha')
+    const email = 'guest@concha'
+    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(email)
     if (user == null) {
       // Delegate to 404 middleware
       log.info({}, 'Guest user not found')
       return next()
     }
-    res.json(user)
+    res.json(user.toJSON())
   } catch (err) {
     log.info({
-      err: err.stack
+      err: err.stack,
+      email: email
     }, 'An error occurred whilst retrieving the Guest user')
+
+    // Delegate to 500 middleware
     return next(err)
   }
 })
@@ -32,13 +36,13 @@ router.get('/guest', async (req, res, next) => {
 // Retrieve user based on email only
 router.get('/member/:email', async (req, res, next) => {
   try {
-    const user = await req.app.get('dbService').findUserByEmail(req.params.email)
+    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(req.params.email)
     if (user == null) {
       // Delegate to 404 middleware
       log.info({ email: req.params.email }, 'User not found based on email search')
       return next()
     }
-    res.json(user)
+    res.json(user.toJSON())
   } catch (err) {
     log.info({
       err: err.stack,
@@ -53,8 +57,8 @@ router.get('/member/:email', async (req, res, next) => {
 // Retrieve user based on email and password.
 router.get('/member/:email/:password', async (req, res, next) => {
   try {
-    const dbService = req.app.get('dbService')
-    const user = await dbService.findUserByEmail(req.params.email)
+    const dbFacade = req.app.get('dbFacade')
+    const user = await dbFacade.getUserActions().findUserByEmail(req.params.email)
     if (user === null) {
       // Delegate to 404 middleware. We can't find the user.
       log.info({ 
@@ -64,7 +68,11 @@ router.get('/member/:email/:password', async (req, res, next) => {
       return next()
     }
 
-    const isPasswordCorrect = dbService.isPasswordCorrect(req.params.email, req.params.password)
+    const isPasswordCorrect = 
+      dbFacade
+        .getUserActions()
+        .isPasswordCorrect(req.params.email, req.params.password)
+
     if (!isPasswordCorrect) {
       // Delegate to error-handler middleware.
       const message = 'User password is incorrect'
@@ -78,7 +86,7 @@ router.get('/member/:email/:password', async (req, res, next) => {
     }
 
     // Authentication was successful.
-    res.json(user)
+    res.json(user.toJSON())
   } catch (err) {
     log.info({
       err: err.stack,

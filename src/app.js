@@ -7,10 +7,10 @@ const log = require('./services/log')
 const express = require('express')
 const bodyParser = require('body-parser')
 
-module.exports = (dbService) => {
+module.exports = (dbFacade) => {
   const app = express()
 
-  app.set('dbService', dbService)
+  app.set('dbFacade', dbFacade)
 
   // Middleware to check each client request specifically accepts JSON responses.
   app.use((req, res, next) => {

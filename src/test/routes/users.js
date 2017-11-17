@@ -4,7 +4,7 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 
-const dbService = require('../mocks/database/service')
+const dbFacade = require('../mocks/database/facade')
 const bootApp = require('../../app')
 const User = require('../../models/user')
 
@@ -16,13 +16,13 @@ chai.use(chaiHttp)
 describe('Users API Endpoint', () => {
   before(() => {
     // Connect to the database
-    dbService.connect()
+    dbFacade.connect()
 
     // Insert app dependencies
-    app = bootApp(dbService)
+    app = bootApp(dbFacade)
 
     // Insert a non-guest user into the mock database
-    dbService.saveUser(new User(
+    dbFacade.getUserActions().saveUser(new User(
       null,
       'test@test.com',
       'Password_1%',
@@ -35,7 +35,7 @@ describe('Users API Endpoint', () => {
   })
 
   after(() => {
-    dbService.disconnect()
+    dbFacade.disconnect()
   })
 
   it('Should return 200 and the guest user when requested', (done) => {

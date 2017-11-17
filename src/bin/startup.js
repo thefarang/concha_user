@@ -2,7 +2,7 @@
 
 const http = require('http')
 const log = require('../services/log')
-const dbService = require('../services/database/service')
+const dbFacade = require('../services/database/facade')
 
 const bootApp = require('../app')
 
@@ -59,11 +59,11 @@ const onListening = () => {
 }
 
 // Start the database
-dbService.connect()
-process.on('SIGINT', () => dbService.disconnect())
+dbFacade.connect()
+process.on('SIGINT', () => dbFacade.disconnect())
 
 // Inject app dependencies
-const app = bootApp(dbService)
+const app = bootApp(dbFacade)
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '80')

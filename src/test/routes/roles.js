@@ -4,7 +4,7 @@ const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
 
-const dbService = require('../mocks/database/service')
+const dbFacade = require('../mocks/database/facade')
 const bootApp = require('../../app')
 
 let app = null
@@ -34,14 +34,14 @@ const isValidRole = (role) => {
 describe('User Role API Endpoint', () => {
   before(() => {
     // Connect to the database
-    dbService.connect()
+    dbFacade.connect()
 
     // Insert app dependencies
-    app = bootApp(dbService)
+    app = bootApp(dbFacade)
   })
 
   after(() => {
-    dbService.disconnect()
+    dbFacade.disconnect()
   })
 
   it('Should return 404 if an invalid user role id is passed in', (done) => {
