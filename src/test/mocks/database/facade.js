@@ -1,7 +1,7 @@
 'use strict'
 
-const dbRolesData = require('../../../scripts/data/roles')
-const dbUsersData = require('../../../scripts/data/users')
+const dbRoles = require('../../../scripts/data/roles')
+const dbUsers = require('../../../scripts/data/users')
 const Role = require('../../../models/role')
 const User = require('../../../models/user')
 
@@ -14,28 +14,10 @@ const connect = () => {
   users = []
 
   // Insert the Roles into the mock database service
-  const rolesData = dbRolesData.getRolesData()
-  rolesData.forEach((currentRoleData) => {
-    roles.push(new Role(
-      currentRoleData.id,
-      currentRoleData.name,
-      currentRoleData.createdAt,
-      currentRoleData.updatedAt
-    ))
-  })
+  roles = dbRoles.getRoles()
 
   // Insert the default Users into the mock database service
-  const usersData = dbUsersData.getUsersData()
-  usersData.forEach((currentUserData) => {
-    users.push(new User(
-      currentUserData.id,
-      currentUserData.email,
-      currentUserData.password,
-      currentUserData.role,
-      currentUserData.createdAt,
-      currentUserData.updatedAt
-    ))
-  })
+  users = dbUsers.getDefaultUsers()
 }
 
 const disconnect = () => {

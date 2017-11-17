@@ -2,7 +2,7 @@
 
 const log = require('../services/log')
 const dbFacade = require('../services/database/facade')
-const dbRolesData = require('./data/roles')
+const dbRoles = require('./data/roles')
 const Role = require('../models/role')
 
 const init = async () => {
@@ -12,8 +12,8 @@ const init = async () => {
 
     log.info({}, 'Populating the Roles...')
     const rolePromises = []
-    const rolesData = dbRolesData.getRolesData()
-    rolesData.forEach((currentRoleData) => {
+    const roles = dbRoles.getRoles()
+    roles.forEach((currentRole) => {
 
       // @todo
       // Check to see if current Role already exists. If yes, see if it
@@ -22,18 +22,13 @@ const init = async () => {
       
       rolePromises.push(new Promise(async (resolve, reject) => {
         try {
-          log.info({}, `Populating the ${currentRoleData.name} Role...`)
-          await dbFacade
-            .getRoleActions()
-            .saveRole(new Role(
-              currentRoleData.id,
-              currentRoleData.name,
-              currentRoleData.createdAt,
-              currentRoleData.updatedAt
-            ))
+          log.info({}, `Populating the ${currentRole.id}:${currentRole.name} Role...`)
+          await dbFacade.getRoleActions().saveRole(currentRole)
           return resolve()
         } catch (err) {
-          log.info({ err: err }, `An error occurred populating the ${currentRoleData.name} Role...`)
+          log.info(
+            { err: err }, 
+            `Error occurred populating ${currentRole.id}:${currentRoleData.name} Role`)
           return reject(err)
         }
       }))

@@ -1,9 +1,6 @@
 'use strict'
 
 // @todo
-// How do we store the ID?
-
-// @todo
 // We should store Role in this.role, not Role.id
 
 class User {
@@ -16,8 +13,7 @@ class User {
     this.updatedAt = updatedAt
   }
 
-  // @todo
-  // Omit the password?
+  // Note that the password is omitted for security purposes.
   toJSON() {
     return {
       id: this.id,

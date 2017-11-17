@@ -2,20 +2,15 @@
 
 const log = require('../services/log')
 const express = require('express')
+const dbUsers = require('../scripts/data/users')
 
 const router = express.Router()
-
-// GET /users/guest
-// GET /users/member/email
-// GET /users/member/email/password
 
 // Retrieve the Guest user
 router.get('/guest', async (req, res, next) => {
   try {
-    // @todo
-    // 'guest@concha' needs to be defined somewhere formally
-    const email = 'guest@concha'
-    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(email)
+    const guestUserEmail = dbUsers.getGuestUserEmail()
+    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(guestUserEmail)
     if (user == null) {
       // Delegate to 404 middleware
       log.info({}, 'Guest user not found')

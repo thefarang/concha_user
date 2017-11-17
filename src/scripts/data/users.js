@@ -1,30 +1,24 @@
 'use strict'
 
-// @todo
-// What about ID?
+const User = require('../../models/user')
 
-// id: 1
-// id: _id // Object('aksdja2873skjsdkf')
-// id: null
+const guestUserEmail = 'guest@concha'
+const getGuestUserEmail = () => guestUserEmail
 
-// _id: 1
-// _id: Object('aksdja2873skjsdkf')
-// _id: null
-
-const getUsersData = () => {
+const getDefaultUsers = () => {
   return [
-    {
-      email: 'guest@concha',
-      password: 'password_not_used',
-      role: 1,
-      // createdAt: (new Date()).toISOString(),
-      // updatedAt: (new Date()).toISOString()
-      createdAt: '2017-09-01T12:30:00.000Z',
-      updatedAt: '2017-09-01T12:30:00.000Z'
-    }
+    new User(
+      '507f1f77bcf86cd799439011',
+      getGuestUserEmail(),
+      'password_not_used',
+      1,
+      '2017-09-01T12:30:00.000Z',
+      '2017-09-01T12:30:00.000Z'
+    )
   ]
 }
 
 module.exports = {
-  getUsersData
+  getDefaultUsers,
+  getGuestUserEmail
 }

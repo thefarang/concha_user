@@ -2,7 +2,7 @@
 
 const log = require('../services/log')
 const dbFacade = require('../services/database/facade')
-const dbUsersData = require('./data/users')
+const dbUsers = require('./data/users')
 const User = require('../models/user')
 
 const init = async () => {
@@ -11,8 +11,8 @@ const init = async () => {
     dbFacade.connect()
 
     const userPromises = []
-    const usersData = dbUsersData.getUsersData()
-    usersData.forEach((currentUserData) => {
+    const defaultUsers = dbUsers.getDefaultUsers()
+    defaultUsers.forEach((currentUser) => {
       
       // @todo
       // Check to see if current User already exists. If yes, see if it
@@ -21,20 +21,13 @@ const init = async () => {
       
       userPromises.push(new Promise(async (resolve, reject) => {
         try {
-          log.info({}, `Populating the User ${currentUserData.email}...`)
-          await dbFacade
-            .getUserActions()
-            .saveUser(new User(
-              null,
-              currentUserData.email,
-              currentUserData.password,
-              currentUserData.role,
-              currentUserData.createdAt,
-              currentUserData.updatedAt
-            ))
+          log.info({}, `Populating the User ${currentUser.id}:${currentUser.email}...`)
+          await dbFacade.getUserActions().saveUser(currentUser)
           return resolve()
         } catch (err) {
-          log.info({ err: err }, `An error occurred populating the User ${currentUserData.email}...`)
+          log.info(
+            { err: err }, 
+            `An error occurred populating User ${currentUser.id}:${currentUser.email}`)
           return reject(err)
         }
       }))
@@ -45,7 +38,7 @@ const init = async () => {
     dbFacade.disconnect()
 
   } catch (err) {
-    log.info({ err: err }, 'An error occurred during the Users loading process')
+    log.info({ err: err }, 'An error occurred during the default Users loading process')
     return reject(err)
   }
 }
