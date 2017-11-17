@@ -3,6 +3,14 @@
 // @todo
 // What about ID?
 
+// id: 1
+// id: _id // Object('aksdja2873skjsdkf')
+// id: null
+
+// _id: 1
+// _id: Object('aksdja2873skjsdkf')
+// _id: null
+
 const getUsersData = () => {
   return [
     {

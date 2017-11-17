@@ -3,8 +3,7 @@
 const http = require('http')
 const log = require('../services/log')
 const dbFacade = require('../services/database/facade')
-
-const bootApp = require('../app')
+const app = require('../app')
 
 // Normalize a port into a number, string, or false.
 const normalizePort = (val) => {
@@ -62,15 +61,15 @@ const onListening = () => {
 dbFacade.connect()
 process.on('SIGINT', () => dbFacade.disconnect())
 
-// Inject app dependencies
-const app = bootApp(dbFacade)
+// Inject app dependencies and create an app instance.
+const appInstance = app(dbFacade)
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '80')
-app.set('port', port)
+appInstance.set('port', port)
 
-// Start the app
-const server = http.createServer(app)
+// Start the appInstance
+const server = http.createServer(appInstance)
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)

@@ -1,14 +1,14 @@
 'use strict'
 
 const log = require('../services/log')
-const dbService = require('../services/database/service')
+const dbFacade = require('../services/database/facade')
 const dbUsersData = require('./data/users')
 const User = require('../models/user')
 
 const init = async () => {
   try {
     log.info({}, 'Connecting to the dbase...')
-    dbService.connect()
+    dbFacade.connect()
 
     const userPromises = []
     const usersData = dbUsersData.getUsersData()
@@ -22,14 +22,16 @@ const init = async () => {
       userPromises.push(new Promise(async (resolve, reject) => {
         try {
           log.info({}, `Populating the User ${currentUserData.email}...`)
-          await dbService.saveUser(new User(
-            null,
-            currentUserData.email,
-            currentUserData.password,
-            currentUserData.role,
-            currentUserData.createdAt,
-            currentUserData.updatedAt
-          ))
+          await dbFacade
+            .getUserActions()
+            .saveUser(new User(
+              null,
+              currentUserData.email,
+              currentUserData.password,
+              currentUserData.role,
+              currentUserData.createdAt,
+              currentUserData.updatedAt
+            ))
           return resolve()
         } catch (err) {
           log.info({ err: err }, `An error occurred populating the User ${currentUserData.email}...`)
@@ -40,7 +42,7 @@ const init = async () => {
     await Promise.all(userPromises)
 
     log.info({}, 'Disconnecting from the dbase...')
-    dbService.disconnect()
+    dbFacade.disconnect()
 
   } catch (err) {
     log.info({ err: err }, 'An error occurred during the Users loading process')
