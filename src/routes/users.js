@@ -9,12 +9,16 @@ const router = express.Router()
 // Retrieve the Guest user
 router.get('/guest', async (req, res, next) => {
   try {
-    const guestUserEmail = dbUsers.getGuestUserEmail()
-    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(guestUserEmail)
+    const user =
+      await req.app.get('dbFacade')
+        .getUserActions()
+        .findUserByEmail(dbUsers.getGuestUser().email)
+
     if (user == null) {
-      // Delegate to 404 middleware
-      log.info({}, 'Guest user not found')
-      return next()
+      // If the Guest user does not exist then this is a serious issue.
+      // Delegate to 500 middleware
+      const err = new Error('Guest user not found')
+      return next(err)
     }
     res.json(user.toJSON())
   } catch (err) {
@@ -53,7 +57,11 @@ router.get('/member/:email', async (req, res, next) => {
 router.get('/member/:email/:password', async (req, res, next) => {
   try {
     const dbFacade = req.app.get('dbFacade')
-    const user = await dbFacade.getUserActions().findUserByEmail(req.params.email)
+    const user = 
+      await dbFacade
+        .getUserActions()
+        .findUserByEmail(req.params.email)
+
     if (user === null) {
       // Delegate to 404 middleware. We can't find the user.
       log.info({ 
@@ -63,20 +71,20 @@ router.get('/member/:email/:password', async (req, res, next) => {
       return next()
     }
 
-    const isPasswordCorrect = 
-      dbFacade
+    const isPasswordCorrect =
+      await dbFacade
         .getUserActions()
         .isPasswordCorrect(req.params.email, req.params.password)
 
     if (!isPasswordCorrect) {
+      // We have found the user, but the password is incorrect.
       // Delegate to error-handler middleware.
-      const message = 'User password is incorrect'
-      const err = new Error(message)
+      const err = new Error('User password is incorrect')
       err.status = 401
       log.info({ 
         email: req.params.email,
         password:  req.params.password 
-      }, message)
+      }, err.message)
       return next(err)
     }
 

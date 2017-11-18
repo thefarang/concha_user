@@ -12,7 +12,7 @@ const connect = () => {
   // Reset the Roles int the mock database service
   // Reset the default Users in the mock database service
   roles = dbRoles.getRoles()
-  users = dbUsers.getDefaultUsers()
+  users = dbUsers.getUsers()
 }
 
 const disconnect = () => {

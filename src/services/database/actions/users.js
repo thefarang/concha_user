@@ -38,6 +38,11 @@ const saveUser = (user) => {
   })
 }
 
+// @todo
+const findUserById = (id) => {
+  console.log('findUserById() - Not yet implemented')
+}
+
 const findUserByEmail = (email) => {
   return new Promise((resolve, reject) => {
     UserSchema.findOne({ email: email }, (err, userSchema) => {
@@ -66,6 +71,7 @@ const findUserByEmail = (email) => {
   })
 }
 
+// @todo
 const removeUser = (user) => {
   console.log('removeUser() - Not yet implemented')
   /*
@@ -84,9 +90,12 @@ const removeUser = (user) => {
   */
 }
 
+// @todo
+// Should force the client code to pass in the retrieved user and the
+// password submitted, right?
 const isPasswordCorrect = (email, password) => {
   return new Promise((resolve, reject) => {
-    UserSchema.findOne({ email: email }, '+password', (err, userSchema) => {
+    UserSchema.findOne({ email: email }, (err, userSchema) => {
       if (err) {
         log.info({
           err: err,
@@ -103,6 +112,8 @@ const isPasswordCorrect = (email, password) => {
         return reject(err)
       }
   
+      // @todo
+      // Implement this in a Password model, rather than the schema
       userSchema.comparePassword(password, (err, isMatch) => {
         if (err) {
           log.info({

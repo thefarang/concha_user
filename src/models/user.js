@@ -1,8 +1,5 @@
 'use strict'
 
-// @todo
-// We should store Role in this.role, not Role.id
-
 class User {
   constructor(id, email, password, role, createdAt, updatedAt) {
     this.id = id

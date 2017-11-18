@@ -11,8 +11,8 @@ const init = async () => {
     dbFacade.connect()
 
     const userPromises = []
-    const defaultUsers = dbUsers.getDefaultUsers()
-    defaultUsers.forEach((currentUser) => {
+    const users = dbUsers.getUsers()
+    users.forEach((currentUser) => {
       
       // @todo
       // Check to see if current User already exists. If yes, see if it

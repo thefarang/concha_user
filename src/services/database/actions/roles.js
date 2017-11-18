@@ -18,7 +18,7 @@ const saveRole = (role) => {
       }
 
       log.info({ role: role }, 'Populated RoleSchema successfully')
-      resolve()
+      return resolve()
     })
   })
 }

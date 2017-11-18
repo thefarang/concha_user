@@ -6,6 +6,7 @@ const chaiHttp = require('chai-http')
 const dbFacade = require('../mocks/database/facade')
 const app = require('../../app')
 const User = require('../../models/user')
+const dbRoles = require('../../scripts/data/roles')
 
 let appInstance = null
 chai.use(chaiHttp)
@@ -22,7 +23,7 @@ describe('Users API Endpoint', () => {
       null,
       'test@test.com',
       'Password_1%',
-      2,
+      dbRoles.getBloggerRole(),
       // createdAt: (new Date()).toISOString(),
       // updatedAt: (new Date()).toISOString()
       '2017-11-15T13:23:14.341Z',
@@ -48,7 +49,8 @@ describe('Users API Endpoint', () => {
         
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('guest@concha')
-        expect(responseContents.role).to.equal(1)
+        expect(responseContents.role.id).to.equal(1)
+        expect(responseContents.role.name).to.equal('Guest')
         expect(responseContents.createdAt).to.equal('2017-09-01T12:30:00.000Z')
         expect(responseContents.updatedAt).to.equal('2017-09-01T12:30:00.000Z')
         done()
@@ -66,7 +68,8 @@ describe('Users API Endpoint', () => {
 
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('test@test.com')
-        expect(responseContents.role).to.equal(2)
+        expect(responseContents.role.id).to.equal(2)
+        expect(responseContents.role.name).to.equal('Blogger')
         expect(responseContents.createdAt).to.equal('2017-11-15T13:23:14.341Z')
         expect(responseContents.updatedAt).to.equal('2017-11-15T13:23:14.341Z')
         done()
@@ -98,7 +101,8 @@ describe('Users API Endpoint', () => {
 
         const responseContents = JSON.parse(res.text)
         expect(responseContents.email).to.equal('test@test.com')
-        expect(responseContents.role).to.equal(2)
+        expect(responseContents.role.id).to.equal(2)
+        expect(responseContents.role.name).to.equal('Blogger')
         expect(responseContents.createdAt).to.equal('2017-11-15T13:23:14.341Z')
         expect(responseContents.updatedAt).to.equal('2017-11-15T13:23:14.341Z')
         done()

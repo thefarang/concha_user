@@ -31,8 +31,7 @@ let UserSchema = new Schema({
   password: {
     type: String,
     trim: true,
-    required: true,
-    select: false
+    required: true
   },
   role: {
     type: Number,
@@ -53,6 +52,11 @@ let UserSchema = new Schema({
 // @todo
 // The following article uses the function arrow syntax without problems:
 // https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
+
+// @todo
+// Ttis should be implemented in the Models/Password, rather than here
+// Otherwise we are tightly-coupling the database and password creation/evaluation,
+// and these are not related. It will also speed things up elsewhere.
 UserSchema.pre('save', function (next) {
   let userSchema = this
 
