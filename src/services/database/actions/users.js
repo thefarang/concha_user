@@ -3,10 +3,20 @@
 const log = require('../../log')
 const UserSchema = require('../schema/user-schema')
 const User = require('../../../models/user')
+const mongoose = require('mongoose')
 
+const ObjectId = mongoose.Types.ObjectId
+
+// @todo
+// What about if the user is already saved?
 const saveUser = (user) => {
   return new Promise((resolve, reject) => {
     const userSchema = new UserSchema()
+
+    if (user.id) {
+      userSchema._id = new ObjectId(user.id)
+    }
+
     userSchema.email = user.email
     userSchema.password = user.password
     userSchema.role = user.role
@@ -21,14 +31,9 @@ const saveUser = (user) => {
         return reject(err)
       }
 
-      return resolve(new User(
-        userSchema._id,
-        userSchema.email,
-        userSchema.password,
-        userSchema.role,
-        userSchema.created_at,
-        userSchema.updated_at
-      ))
+      // Allocate the newly created UserSchema._id to User.id
+      user.id = userSchema._id.valueOf()
+      return user
     })
   })
 }
@@ -50,6 +55,7 @@ const findUserByEmail = (email) => {
         user = new User(
           userSchema._id,
           userSchema.email,
+          userSchema.password,
           userSchema.role,
           userSchema.created_at,
           userSchema.updated_at
@@ -60,15 +66,15 @@ const findUserByEmail = (email) => {
   })
 }
 
-const removeUser = (email) => {
+const removeUser = (user) => {
   console.log('removeUser() - Not yet implemented')
   /*
   return new Promise((resolve, reject) => {
-    UserSchema.remove({ email: email }, (err) => {
+    UserSchema.remove({ _id: user.id }, (err) => {
       if (err) {
         log.info({
           err: err,
-          email: email
+          user: user
         }, 'An error occurred whilst deleting UserSchema')
         return reject(err)
       }
@@ -108,22 +114,12 @@ const isPasswordCorrect = (email, password) => {
         }
 
         if (!isMatch) {
-          const message = 'User passwords do not match'
-          const err = new Error(message)
-          err.status = 401
-          log.info({ email: email, password: password }, message)
-          return reject(err)
+          log.info({ email: email, password: password }, 'User passwords do not match')
+          return resolve(false)
         }
-        
-        // Transform the mongo UserSchema object into a User object
-        const user = new User(
-          userSchema._id,
-          userSchema.email,
-          userSchema.role,
-          userSchema.created_at,
-          userSchema.updated_at
-        )
-        return resolve(user)
+
+        log.info({ email: email }, 'User password is correct')
+        return resolve(true)
       })
     })
   })

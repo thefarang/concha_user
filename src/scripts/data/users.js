@@ -3,6 +3,7 @@
 const User = require('../../models/user')
 
 const guestUserEmail = 'guest@concha'
+
 const getGuestUserEmail = () => guestUserEmail
 
 const getDefaultUsers = () => {
