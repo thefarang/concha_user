@@ -6,7 +6,7 @@ const chaiHttp = require('chai-http')
 const dbFacade = require('../mocks/database/facade')
 const app = require('../../app')
 const User = require('../../models/user')
-const dbRoles = require('../../scripts/data/roles')
+const roles = require('../../scripts/data/roles')
 
 let appInstance = null
 chai.use(chaiHttp)
@@ -23,7 +23,7 @@ describe('Users API Endpoint', () => {
       null,
       'test@test.com',
       'Password_1%',
-      dbRoles.getBloggerRole(),
+      roles.getBloggerRole(),
       // createdAt: (new Date()).toISOString(),
       // updatedAt: (new Date()).toISOString()
       '2017-11-15T13:23:14.341Z',

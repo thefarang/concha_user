@@ -7,6 +7,9 @@ const bcrypt = require('bcryptjs')
 const SALT_WORK_FACTOR = 10
 
 // @todo
+// Support embedding the Role rather than just the Role ID
+
+// @todo
 // Create a counter collection separately which is incremented when a new user is added.
 // Look online for the pattern for this.
 
@@ -34,8 +37,23 @@ let UserSchema = new Schema({
     required: true
   },
   role: {
-    type: Number,
-    required: true
+    id: {
+      type: Number,
+      required: true
+    },
+    name: {
+      type: String,
+      trim: true,
+      required: true
+    },
+    created_at: {
+      type: Date,
+      required: true
+    },
+    updated_at: {
+      type: Date,
+      required: true
+    }
   },
   created_at: {
     type: Date,

@@ -9,14 +9,6 @@ const router = express.Router()
 router.get('/', async (req, res, next) => {
   try {
     const roles = await req.app.get('dbFacade').getRoleActions().findRoles()
-    if (roles.length === 0) {
-      // We must have roles in the database. To not have them is an error.
-      // Flow into the error handler.
-      const err = new Error('No roles exist in the database')
-      log.info({}, err.message)
-      return next(err)
-    }
-
     res.set('Cache-Control', 'private, max-age=0, no-cache')
     res.status(200)
     res.json(roles)
@@ -34,12 +26,6 @@ router.get('/:id', async (req, res, next) => {
   try {
     const roleId = parseInt(req.params.id, 10)
     const role = await req.app.get('dbFacade').getRoleActions().findRoleById(roleId)
-    if (role == null) {
-      // Delegate to 404 middleware
-      log.info({ roleId: req.params.id }, 'Role ID not found')
-      return next()
-    }
-
     res.set('Cache-Control', 'private, max-age=0, no-cache')
     res.status(200)
     res.json(role)

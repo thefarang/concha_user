@@ -1,42 +1,21 @@
 'use strict'
 
-const dbRoles = require('../../../scripts/data/roles')
+const roles = require('../../../scripts/data/roles')
 const dbUsers = require('../../../scripts/data/users')
-const Role = require('../../../models/role')
+const roleActions = require('../../../services/database/actions/roles')
 const User = require('../../../models/user')
 
-let roles = null
 let users = null
 
 const connect = () => {
-  // Reset the Roles int the mock database service
   // Reset the default Users in the mock database service
-  roles = dbRoles.getRoles()
   users = dbUsers.getUsers()
 }
 
 const disconnect = () => {
 }
 
-const getRoleActions = () => {
-  const saveRole = (role) => {
-    roles.push(role)
-  }
-
-  const findRoleById = (id) => {
-    return roles.find(role => role.id === id)
-  }
-  
-  const findRoles = () => {
-    return roles
-  }
-
-  return {
-    saveRole,
-    findRoleById,
-    findRoles
-  }
-}
+const getRoleActions = () => roleActions
 
 const getUserActions = () => {
   const saveUser = (user) => {

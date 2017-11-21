@@ -1,5 +1,8 @@
 'use strict'
 
+// @todo
+// Move to a library
+
 const Role = require('../../models/role')
 
 const guestRole = new Role(1, 'Guest', '2017-09-01T12:30:00.000Z', '2017-09-01T12:30:00.000Z')

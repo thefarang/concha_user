@@ -50,7 +50,7 @@ describe('User Role API Endpoint', () => {
       .get(`/api/v1/roles/100`)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        expect(res).to.have.status(404)
+        expect(res).to.have.status(500)
         expect(res).to.be.json
         expect(res.text).to.be.empty
         done()
