@@ -7,9 +7,6 @@ const bcrypt = require('bcryptjs')
 const SALT_WORK_FACTOR = 10
 
 // @todo
-// Support embedding the Role rather than just the Role ID
-
-// @todo
 // Create a counter collection separately which is incremented when a new user is added.
 // Look online for the pattern for this.
 

@@ -7,36 +7,45 @@ const mongoose = require('mongoose')
 
 const ObjectId = mongoose.Types.ObjectId
 
-// @todo
-// What about if the user is already saved?
-const saveUser = (user) => {
-  return new Promise((resolve, reject) => {
-    const userSchema = new UserSchema()
-
-    if (user.id) {
-      userSchema._id = new ObjectId(user.id)
+const _upsert = (user, userSchema, resolve, reject) => {
+  if (user.id) {
+    userSchema._id = new ObjectId(user.id)
+  }
+  userSchema.email = user.email
+  userSchema.password = user.password
+  userSchema.role.id = user.role.id
+  userSchema.role.name = user.role.name
+  userSchema.role.created_at = user.role.createdAt
+  userSchema.role.updated_at = user.role.updatedAt
+  userSchema.created_at = user.createdAt
+  userSchema.updated_at = user.updatedAt
+  userSchema.save((err) => {
+    if (err) {
+      log.info({
+        err: err,
+        user: user
+      }, 'An error occurred saving the UserSchema')
+      return reject(err)
     }
 
-    userSchema.email = user.email
-    userSchema.password = user.password
-    userSchema.role.id = user.role.id
-    userSchema.role.name = user.role.name
-    userSchema.role.created_at = user.role.createdAt
-    userSchema.role.updated_at = user.role.updatedAt
-    userSchema.created_at = user.createdAt
-    userSchema.updated_at = user.updatedAt
-    userSchema.save((err) => {
+    user.id = userSchema._id.valueOf()
+    return resolve(user)
+  })
+}
+
+const saveUser = (user) => {
+  return new Promise((resolve, reject) => {
+    UserSchema.findOne({ _id: user.id }, (err, userSchema) => {
       if (err) {
         log.info({
           err: err,
           user: user
-        }, 'An error occurred saving the UserSchema')
+        }, 'An error occurred locating the existing User document')
         return reject(err)
       }
 
-      // Allocate the newly created UserSchema._id to User.id
-      user.id = userSchema._id.valueOf()
-      return resolve(user)
+      userSchema = userSchema || new UserSchema()
+      _upsert(user, userSchema, resolve, reject)
     })
   })
 }

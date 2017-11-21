@@ -11,14 +11,7 @@ const init = async () => {
     dbFacade.connect()
 
     const userPromises = []
-    const users = dbUsers.getUsers()
-    users.forEach((currentUser) => {
-      
-      // @todo
-      // Check to see if current User already exists. If yes, see if it
-      // needs to be modified, and modify if necessary. Then proceed to
-      // the next User.
-      
+    dbUsers.getUsers().forEach((currentUser) => {
       userPromises.push(new Promise(async (resolve, reject) => {
         try {
           log.info({}, `Populating the User ${currentUser.id}:${currentUser.email}...`)
