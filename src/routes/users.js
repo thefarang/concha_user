@@ -1,88 +1,105 @@
 'use strict'
 
+const log = require('../services/log')
 const express = require('express')
-const router = express.Router()
-const User = require('../models/user')
+const dbUsers = require('../scripts/data/users')
 
-// GET /users/guest
-// GET /users/member/email
-// GET /users/member/email/password
+const router = express.Router()
 
 // Retrieve the Guest user
-router.get('/guest', (req, res, next) => {
-  User.findOne({ role: 1 }, (err, user) => {
-    if (err) {
+router.get('/guest', async (req, res, next) => {
+  try {
+    const user =
+      await req.app.get('dbFacade')
+        .getUserActions()
+        .findUserByEmail(dbUsers.getGuestUser().email)
+
+    if (user == null) {
+      // If the Guest user does not exist then this is a serious issue.
+      // Delegate to 500 middleware
+      const err = new Error('Guest user not found')
       return next(err)
     }
+    res.json(user.toJSON())
+  } catch (err) {
+    log.info({
+      err: err.stack,
+      email: email
+    }, 'An error occurred whilst retrieving the Guest user')
 
-    if (user === null) {
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(404)
-      res.json()
-      return
-    }
-    res.json(user)
-  })
+    // Delegate to 500 middleware
+    return next(err)
+  }
 })
 
 // Retrieve user based on email only
-router.get('/member/:email', (req, res, next) => {
-  User.findOne({ email: req.params.email }, (err, user) => {
-    if (err) {
-      return next(err)
+router.get('/member/:email', async (req, res, next) => {
+  try {
+    const user = await req.app.get('dbFacade').getUserActions().findUserByEmail(req.params.email)
+    if (user == null) {
+      // Delegate to 404 middleware
+      log.info({ email: req.params.email }, 'User not found based on email search')
+      return next()
     }
-
-    if (user === null) {
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(404)
-      res.json()
-      return
-    }
-    res.json(user)
-  })
+    res.json(user.toJSON())
+  } catch (err) {
+    log.info({
+      err: err.stack,
+      email: req.params.email
+    }, 'An error occurred whilst retrieving the User based on email search')
+    
+    // Delegate to 500 middleware
+    return next(err)
+  }
 })
 
 // Retrieve user based on email and password.
-router.get('/member/:email/:password', (req, res, next) => {
-  User.findOne({ email: req.params.email }, '+password', (err, user) => {
-    if (err) {
+router.get('/member/:email/:password', async (req, res, next) => {
+  try {
+    const dbFacade = req.app.get('dbFacade')
+    const user = 
+      await dbFacade
+        .getUserActions()
+        .findUserByEmail(req.params.email)
+
+    if (user === null) {
+      // Delegate to 404 middleware. We can't find the user.
+      log.info({ 
+        email: req.params.email,
+        password:  req.params.password 
+      }, 'User not found based on email and password search')
+      return next()
+    }
+
+    const isPasswordCorrect =
+      await dbFacade
+        .getUserActions()
+        .isPasswordCorrect(req.params.email, req.params.password)
+
+    if (!isPasswordCorrect) {
+      // We have found the user, but the password is incorrect.
+      // Delegate to error-handler middleware.
+      const err = new Error('User password is incorrect')
+      err.status = 401
+      log.info({ 
+        email: req.params.email,
+        password:  req.params.password 
+      }, err.message)
       return next(err)
     }
 
-    if (user === null) {
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(404)
-      res.json()
-      return
-    }
-
-    user.comparePassword(req.params.password, (err, isMatch) => {
-      if (err) {
-        return next(err)
-      }
-
-      if (!isMatch) {
-        res.set('Cache-Control', 'private, max-age=0, no-cache')
-        res.status(401)
-        res.json()
-        return
-      }
-
-      // @todo
-      // Move this to a function in User
-      const userObj = {
-        _id: user._id,
-        email: user.email,
-        role: user.role,
-        created_at: user.created_at,
-        updated_at: user.updated_at
-      }
-
-      res.set('Cache-Control', 'private, max-age=0, no-cache')
-      res.status(200)
-      res.json(userObj)
-    })
-  })
+    // Authentication was successful.
+    res.json(user.toJSON())
+  } catch (err) {
+    log.info({
+      err: err.stack,
+      email: req.params.email,
+      password: req.params.password
+    }, 'An error occurred whilst retrieving the User based on email and password search')
+    
+    // Delegate to the 500 middleware
+    return next(err)
+  }
 })
 
 module.exports = router

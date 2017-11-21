@@ -3,9 +3,11 @@
 const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
-const testRolesDb = require('../support/db-roles')
+
+const dbFacade = require('../mocks/database/facade')
 const app = require('../../app')
 
+let appInstance = null
 chai.use(chaiHttp)
 
 const isValidRole = (role) => {
@@ -30,23 +32,25 @@ const isValidRole = (role) => {
 /* eslint-disable no-unused-expressions */
 /* eslint-disable handle-callback-err */
 describe('User Role API Endpoint', () => {
-  before(async () => {
-    await testRolesDb.connect()
-    await testRolesDb.clean()
-    await testRolesDb.populate()
+  before(() => {
+    // Connect to the database
+    dbFacade.connect()
+
+    // Insert app dependencies into a new appInstance
+    appInstance = app(dbFacade)
   })
 
-  after(async () => {
-    await testRolesDb.close()
+  after(() => {
+    dbFacade.disconnect()
   })
 
   it('Should return 404 if an invalid user role id is passed in', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/roles/100`)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        expect(res).to.have.status(404)
+        expect(res).to.have.status(500)
         expect(res).to.be.json
         expect(res.text).to.be.empty
         done()
@@ -55,7 +59,7 @@ describe('User Role API Endpoint', () => {
 
   it('Should return 200 and a single user role matching the valid user role id passed in', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/roles/1`)
       .set('Accept', 'application/json')
       .end((err, res) => {
@@ -70,7 +74,7 @@ describe('User Role API Endpoint', () => {
 
   it('Should return 200 and the full set of user roles when all roles are requested', (done) => {
     chai
-      .request(app)
+      .request(appInstance)
       .get(`/api/v1/roles`)
       .set('Accept', 'application/json')
       .end((err, res) => {

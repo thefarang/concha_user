@@ -1,32 +1,21 @@
 'use strict'
 
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-
-var RoleSchema = new Schema({
-  // _id will be created by default
-  id: {
-    type: Number,
-    required: true
-  },
-  name: {
-    type: String,
-    trim: true,
-    required: true
-  },
-  created_at: {
-    type: Date,
-    required: true
-  },
-  updated_at: {
-    type: Date,
-    required: true
+class Role {
+  constructor(id, name, createdAt, updatedAt) {
+    this.id = id
+    this.name = name
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
   }
-}, {
-  collection: 'role'
-})
 
-// Generate a Model from the Schema.
-var Role = mongoose.model('Role', RoleSchema)
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    }
+  }
+}
 
 module.exports = Role

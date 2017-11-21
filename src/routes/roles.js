@@ -1,48 +1,41 @@
 'use strict'
 
-const log = require('../lib/log')
+const log = require('../services/log')
 const express = require('express')
+
 const router = express.Router()
-let Role = require('../models/role')
 
-// GET all roles
-router.get('/', (req, res, next) => {
-  Role.find((err, roles) => {
-    if (err) {
-      log.info({
-        err: err
-      }, 'An error occurred whilst finding all user roles')
-      return next(err)
-    }
-
+// Get all roles
+router.get('/', async (req, res, next) => {
+  try {
+    const roles = await req.app.get('dbFacade').getRoleActions().findRoles()
     res.set('Cache-Control', 'private, max-age=0, no-cache')
     res.status(200)
     res.json(roles)
-  })
+
+  } catch (err) {
+    log.info({
+      err: err.stack
+    }, 'An error occurred whilst finding all user roles')
+    return next(err)
+  }
 })
 
 // Get specific role
-router.get('/:id', (req, res, next) => {
-  Role.findOne({ id: req.params.id }, (err, role) => {
-    if (err) {
-      log.info({
-        err: err,
-        roleId: req.params.id
-      }, 'An error occurred whilst locating user role')
-      return next(err)
-    }
-
+router.get('/:id', async (req, res, next) => {
+  try {
+    const roleId = parseInt(req.params.id, 10)
+    const role = await req.app.get('dbFacade').getRoleActions().findRoleById(roleId)
     res.set('Cache-Control', 'private, max-age=0, no-cache')
-    if (role == null) {
-      // @todo
-      // This should be delegated to the 404 middleware
-      res.status(404)
-      res.json()
-    } else {
-      res.status(200)
-      res.json(role)
-    }
-  })
+    res.status(200)
+    res.json(role)
+  } catch (err) {
+    log.info({
+      err: err,
+      roleId: req.params.id
+    }, 'An error occurred whilst locating user role')
+    return next(err)
+  }
 })
 
 module.exports = router
