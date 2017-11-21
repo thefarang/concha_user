@@ -3,8 +3,7 @@
 const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
-// const dbFacade = require('../mocks/database/facade')
-const dbFacade = require('../../services/database/facade')
+const dbFacade = require('../mocks/database/facade')
 
 const app = require('../../app')
 const User = require('../../models/user')

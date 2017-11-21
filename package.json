@@ -7,7 +7,7 @@
     "fix-style": "./node_modules/.bin/standard --fix \"src/**/*.js\"",
     "init-users": "node ./src/scripts/init-users.js",
     "debug": "./node_modules/.bin/nodemon ./src/bin/startup.js",
-    "test": "./node_modules/.bin/mocha \"src/test/routes/users.js\"",
+    "test": "./node_modules/.bin/mocha \"src/test/routes/*.js\"",
     "test-cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --timeout 10000 \"src/test/routes/*.js\"",
     "test-coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
@@ -28,7 +28,8 @@
     "nodemon": "1.12.1",
     "istanbul": "0.4.5",
     "coveralls": "3.0.0",
-    "mocha-lcov-reporter": "1.3.0"
+    "mocha-lcov-reporter": "1.3.0",
+    "cucumber": "3.1.0"
   },
   "standard": {
     "globals": [
