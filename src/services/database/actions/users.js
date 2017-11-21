@@ -19,7 +19,10 @@ const saveUser = (user) => {
 
     userSchema.email = user.email
     userSchema.password = user.password
-    userSchema.role = user.role
+    userSchema.role.id = user.role.id
+    userSchema.role.name = user.role.name
+    userSchema.role.created_at = user.role.createdAt
+    userSchema.role.updated_at = user.role.updatedAt
     userSchema.created_at = user.createdAt
     userSchema.updated_at = user.updatedAt
     userSchema.save((err) => {
@@ -33,7 +36,7 @@ const saveUser = (user) => {
 
       // Allocate the newly created UserSchema._id to User.id
       user.id = userSchema._id.valueOf()
-      return user
+      return resolve(user)
     })
   })
 }

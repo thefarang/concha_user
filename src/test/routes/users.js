@@ -3,7 +3,9 @@
 const chai = require('chai')
 const expect = require('chai').expect
 const chaiHttp = require('chai-http')
-const dbFacade = require('../mocks/database/facade')
+// const dbFacade = require('../mocks/database/facade')
+const dbFacade = require('../../services/database/facade')
+
 const app = require('../../app')
 const User = require('../../models/user')
 const roles = require('../../scripts/data/roles')
@@ -19,6 +21,7 @@ describe('Users API Endpoint', () => {
     dbFacade.connect()
 
     // Insert a non-guest user into the mock database
+    /*
     dbFacade.getUserActions().saveUser(new User(
       null,
       'test@test.com',
@@ -29,6 +32,7 @@ describe('Users API Endpoint', () => {
       '2017-11-15T13:23:14.341Z',
       '2017-11-15T13:23:14.341Z'
     ))
+    */
 
     // Insert app dependencies into a new appInstance
     appInstance = app(dbFacade)
@@ -38,6 +42,7 @@ describe('Users API Endpoint', () => {
     dbFacade.disconnect()
   })
 
+  /*
   it('Should return 200 and the guest user when requested', (done) => {
     chai
       .request(appInstance)
@@ -135,6 +140,7 @@ describe('Users API Endpoint', () => {
         done()
       })
   })
+  */
 })
 /* eslint-enable handle-callback-err */
 /* eslint-enable no-unused-expressions */

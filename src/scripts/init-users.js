@@ -1,8 +1,5 @@
 'use strict'
 
-// @todo HERE
-// Test this against the database
-
 const log = require('../services/log')
 const dbFacade = require('../services/database/facade')
 const dbUsers = require('./data/users')
